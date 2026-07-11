@@ -142,3 +142,12 @@ export const JobPatch = z
     message: 'at least one of saved/hidden must be provided',
   });
 export type JobPatch = z.infer<typeof JobPatch>;
+
+export {
+  SKILL_TAXONOMY,
+  ALIAS_TO_SKILL,
+  isKnownSkill,
+  getSkillCategory,
+  type SkillCategory,
+  type SkillDefinition,
+} from './taxonomy.js';

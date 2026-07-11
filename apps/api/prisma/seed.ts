@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { JobSource } from '@waypoint/shared';
+import { JobSource, SKILL_TAXONOMY } from '@waypoint/shared';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +21,15 @@ async function main() {
     });
   }
   console.log(`Seeded ${JobSource.options.length} sources.`);
+
+  for (const skill of SKILL_TAXONOMY) {
+    await prisma.skill.upsert({
+      where: { name: skill.name },
+      update: { category: skill.category },
+      create: { name: skill.name, category: skill.category },
+    });
+  }
+  console.log(`Seeded ${SKILL_TAXONOMY.length} skills.`);
 }
 
 main()
