@@ -7,5 +7,9 @@ export default defineConfig({
   plugins: [swc.vite()],
   test: {
     exclude: ['**/node_modules/**', 'dist/**'],
+    // The e2e suite boots the full AppModule, which now runs two BullMQ
+    // queues (crawl, extract) — their Redis connections take longer than
+    // Vitest's 10s default to close cleanly in afterAll.
+    hookTimeout: 20_000,
   },
 });

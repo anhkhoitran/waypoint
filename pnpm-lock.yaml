@@ -44,6 +44,9 @@ importers:
       '@waypoint/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@waypoint/skill-extractor':
+        specifier: workspace:*
+        version: link:../../packages/skill-extractor
       bullmq:
         specifier: ^5.80.1
         version: 5.80.1

@@ -1,6 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ExtractModule } from '../extract/extract.module';
 import { CrawlController } from './crawl.controller';
 import { CRAWL_QUEUE, CrawlProcessor } from './crawl.processor';
 import { CrawlService } from './crawl.service';
@@ -22,6 +23,7 @@ import { PrismaJobStore } from './prisma-job-store';
       },
     }),
     BullModule.registerQueue({ name: CRAWL_QUEUE }),
+    ExtractModule,
   ],
   controllers: [CrawlController],
   providers: [CrawlService, CrawlProcessor, PrismaJobStore, PlaywrightBrowserProvider],

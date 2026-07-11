@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "backfill": "curl -X POST http://localhost:3001/extract/backfill"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -25,6 +26,7 @@
     "@prisma/client": "^6.19.3",
     "@waypoint/crawler-engine": "workspace:*",
     "@waypoint/shared": "workspace:*",
+    "@waypoint/skill-extractor": "workspace:*",
     "bullmq": "^5.80.1",
     "ioredis": "^5.11.1",
     "playwright": "^1.61.1",
