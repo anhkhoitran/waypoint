@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useReviewStats } from '../api/review';
 import { Icon, type IconName } from './Icon';
 import { useTheme } from '../theme';
 
@@ -16,6 +17,7 @@ const secondaryNav: Array<{ to: string; label: string; icon: IconName }> = [
 
 export function Sidebar() {
   const { theme, toggle } = useTheme();
+  const reviewStats = useReviewStats();
   return (
     <aside className="sidebar">
       <div className="logo">
@@ -35,6 +37,9 @@ export function Sidebar() {
         >
           <Icon name={item.icon} size={16} />
           {item.label}
+          {item.to === '/review' && reviewStats.data && reviewStats.data.dueToday > 0 ? (
+            <span className="nav-badge">{reviewStats.data.dueToday}</span>
+          ) : null}
         </NavLink>
       ))}
 

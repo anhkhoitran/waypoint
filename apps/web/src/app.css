@@ -74,6 +74,16 @@
   font-weight: 600;
 }
 
+.nav-badge {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .sidebar-footer {
   margin-top: auto;
   display: flex;
@@ -1086,4 +1096,209 @@
   color: var(--text-muted);
   font-size: 11.5px;
   white-space: nowrap;
+}
+
+/* Daily Review ---------------------------------------------------------------- */
+
+.review-stats-strip {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.review-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.review-stat-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.review-stat-streak .review-stat-value {
+  color: var(--warning);
+}
+
+.review-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.review-card {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.review-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-card-progress {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-card-prompt {
+  margin-top: 20px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.review-card-divider {
+  margin: 20px 0;
+  border-top: 1px dashed var(--border-strong);
+}
+
+.review-card-answer {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.review-card-prompt :is(p, ul, ol),
+.review-card-answer :is(p, ul, ol) {
+  margin: 0 0 10px;
+}
+
+.review-card-prompt :is(p, ul, ol):last-child,
+.review-card-answer :is(p, ul, ol):last-child {
+  margin-bottom: 0;
+}
+
+.review-card-prompt code,
+.review-card-answer code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-sunken);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.review-card-prompt pre,
+.review-card-answer pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--surface-sunken);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.review-space-hint {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.review-grade-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.review-grade-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  cursor: pointer;
+  transition: filter 120ms ease;
+}
+
+.review-grade-button:hover {
+  filter: brightness(0.97);
+}
+
+[data-theme='dark'] .review-grade-button:hover {
+  filter: brightness(1.15);
+}
+
+.review-grade-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.review-grade-key {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.review-grade-interval {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  margin-top: 2px;
+}
+
+.review-grade-again {
+  border-color: var(--danger);
+}
+.review-grade-again .review-grade-interval {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.review-grade-hard {
+  border-color: var(--warning);
+}
+.review-grade-hard .review-grade-interval {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.review-grade-good {
+  border-color: var(--success);
+}
+.review-grade-good .review-grade-interval {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.review-grade-easy {
+  border-color: var(--info);
+}
+.review-grade-easy .review-grade-interval {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+.review-session-end {
+  max-width: 480px;
+  margin: 40px auto 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.review-session-breakdown {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
 }
