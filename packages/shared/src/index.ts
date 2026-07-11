@@ -208,6 +208,8 @@ export {
 export const TrackId = z.enum(['dsa', 'system_design', 'cloud', 'web']);
 export type TrackId = z.infer<typeof TrackId>;
 
+export { sm2, type Sm2Grade, type Sm2Result, type Sm2State } from './sm2.js';
+
 /** GET /insights/skill-demand and /insights/gap query params. */
 export const InsightsSkillDemandQuery = z.object({
   window: z.string().optional(),
