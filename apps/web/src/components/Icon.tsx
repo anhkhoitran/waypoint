@@ -111,6 +111,44 @@ const paths: Record<string, JSX.Element> = {
       <path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" />
     </>
   ),
+  check: <path d="M5 12.5l4.5 4.5L19 7" />,
+  'chevron-down': <path d="M6 9l6 6 6-6" />,
+  article: (
+    <>
+      <rect x="4" y="3" width="16" height="18" rx="1.5" />
+      <path d="M8 8h8M8 12h8M8 16h5" />
+    </>
+  ),
+  'play-circle': (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M10 8.5l6 3.5-6 3.5v-7Z" fill="currentColor" stroke="none" />
+    </>
+  ),
+  'graduation-cap': (
+    <>
+      <path d="M2 8l10-4 10 4-10 4-10-4Z" />
+      <path d="M6 10.5V16c0 1.1 2.7 3 6 3s6-1.9 6-3v-5.5" />
+      <path d="M22 8v6" />
+    </>
+  ),
+  'list-checks': (
+    <>
+      <path d="M4 6l1.5 1.5L8 5" />
+      <path d="M4 12l1.5 1.5L8 11" />
+      <path d="M4 18l1.5 1.5L8 17" />
+      <path d="M12 6h8M12 12h8M12 18h8" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" />
+      <path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20" />
+    </>
+  ),
+  flame: (
+    <path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.3-2-1-3 2 1 3 3.5 3 6a8 8 0 1 1-16 0c0-4 3-6 4-8 .3 3 1.5 2.5 1.5 1.5C9.5 4 11 3 12 2Z" />
+  ),
 };
 
 export type IconName = keyof typeof paths;
