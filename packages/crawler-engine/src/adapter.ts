@@ -8,12 +8,30 @@ export interface DiscoveredJob {
   raw?: RawJob;
 }
 
+/**
+ * A single browser page/tab, reduced to the operations adapters need.
+ * Modeled after Playwright's Page so a real implementation is a thin
+ * wrapper, but crawler-engine itself never imports Playwright.
+ */
+export interface PageLike {
+  goto(url: string): Promise<void>;
+  content(): Promise<string>;
+  close(): Promise<void>;
+}
+
+/** Supplies browser pages for adapters that need JS-rendered content (e.g. ITviec). */
+export interface BrowserContextProvider {
+  newPage(): Promise<PageLike>;
+}
+
 /** Utilities the engine hands to every adapter — adapters never fetch on their own. */
 export interface AdapterContext {
   /** Rate-limited, robots-aware fetch. Throws on non-2xx. */
   fetchText(url: string): Promise<string>;
   fetchJson<T = unknown>(url: string): Promise<T>;
   log(message: string): void;
+  /** Present only when the host app supplies a browser (e.g. the API app via Playwright). */
+  browser?: BrowserContextProvider;
 }
 
 /**
