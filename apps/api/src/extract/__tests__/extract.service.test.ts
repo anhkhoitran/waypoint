@@ -16,8 +16,22 @@ describe('ExtractService', () => {
     it('adds one queue job per id, with a jobId that dedupes retries', async () => {
       await service.enqueue(['a', 'b']);
       expect(queue.add).toHaveBeenCalledTimes(2);
-      expect(queue.add).toHaveBeenCalledWith('extract', { jobId: 'a' }, { jobId: 'extract-a' });
-      expect(queue.add).toHaveBeenCalledWith('extract', { jobId: 'b' }, { jobId: 'extract-b' });
+      expect(queue.add).toHaveBeenCalledWith(
+        'extract',
+        { jobId: 'a' },
+        { jobId: 'extract-a', removeOnComplete: true, removeOnFail: 50 },
+      );
+      expect(queue.add).toHaveBeenCalledWith(
+        'extract',
+        { jobId: 'b' },
+        { jobId: 'extract-b', removeOnComplete: true, removeOnFail: 50 },
+      );
+    });
+
+    it('removes completed jobs so the same id can be re-enqueued later (backfill retry, manual re-extraction)', async () => {
+      await service.enqueue(['a']);
+      const [, , opts] = queue.add.mock.calls[0]!;
+      expect(opts.removeOnComplete).toBe(true);
     });
 
     it('does nothing for an empty list', async () => {
