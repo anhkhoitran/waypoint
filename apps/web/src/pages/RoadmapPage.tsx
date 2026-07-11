@@ -1,11 +1,12 @@
 import { Badge, Button, Card } from '@waypoint/ui';
 import type { Profile, ProfileInput, RoadmapItemRecord, RoadmapItemStatus } from '@waypoint/shared';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useProfile, useUpdateProfile } from '../api/profile';
 import { useGenerateRoadmap, useRoadmap, useUpdateRoadmapItem } from '../api/roadmap';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
-import { RESOURCE_KIND_ICON, TRACK_LABELS, TRACK_TONE } from '../lib/trackDisplay';
+import { RESOURCE_KIND_ICON, TRACK_TONE } from '../lib/trackDisplay';
 
 const STATUS_CYCLE: Record<RoadmapItemStatus, RoadmapItemStatus> = {
   todo: 'in_progress',
@@ -13,10 +14,10 @@ const STATUS_CYCLE: Record<RoadmapItemStatus, RoadmapItemStatus> = {
   done: 'todo',
 };
 
-const STATUS_LABEL: Record<RoadmapItemStatus, string> = {
-  todo: 'Not started — click to mark in progress',
-  in_progress: 'In progress — click to mark done',
-  done: 'Done — click to reset',
+const STATUS_LABEL_KEY: Record<RoadmapItemStatus, string> = {
+  todo: 'roadmap.statusTodo',
+  in_progress: 'roadmap.statusInProgress',
+  done: 'roadmap.statusDone',
 };
 
 // r=15.915 makes the circle's circumference ~100, so stroke-dasharray can be
@@ -35,8 +36,9 @@ function profileInputFrom(profile: Profile): ProfileInput {
 }
 
 function DifficultyDots({ level }: { level: number }) {
+  const { t } = useTranslation();
   return (
-    <span className="difficulty-dots" title={`Difficulty ${level}/3`}>
+    <span className="difficulty-dots" title={t('roadmap.difficultyTooltip', { level })}>
       {[1, 2, 3].map((n) => (
         <span key={n} className={`difficulty-dot${n <= level ? ' filled' : ''}`} />
       ))}
@@ -45,8 +47,9 @@ function DifficultyDots({ level }: { level: number }) {
 }
 
 function StatusToggle({ status, onClick }: { status: RoadmapItemStatus; onClick: () => void }) {
+  const { t } = useTranslation();
   return (
-    <button className={`status-toggle status-${status}`} onClick={onClick} title={STATUS_LABEL[status]}>
+    <button className={`status-toggle status-${status}`} onClick={onClick} title={t(STATUS_LABEL_KEY[status])}>
       {status === 'done' ? <Icon name="check" size={13} /> : status === 'in_progress' ? <span className="status-dot" /> : null}
     </button>
   );
@@ -72,6 +75,7 @@ function ProgressRing({ pct }: { pct: number }) {
 }
 
 export function RoadmapPage() {
+  const { t } = useTranslation();
   const roadmapQuery = useRoadmap();
   const profileQuery = useProfile();
   const generateRoadmap = useGenerateRoadmap();
@@ -110,33 +114,33 @@ export function RoadmapPage() {
   };
 
   const handleRegenerate = () => {
-    const confirmed = window.confirm(
-      'Regenerate the roadmap? In-progress and done topics are kept exactly as-is — only unstarted (todo) topics are replaced.',
-    );
+    const confirmed = window.confirm(t('roadmap.regenerateConfirm'));
     if (confirmed) generateRoadmap.mutate();
   };
 
   return (
     <>
       <PageHeader
-        title="Prep Roadmap"
-        subtitle="A weekly study plan across DSA, system design, cloud infra, and web fundamentals."
+        title={t('roadmap.title')}
+        subtitle={t('roadmap.subtitle')}
         actions={
           <>
             {profileQuery.data ? (
               <span className="hours-per-week-control">
-                <button className="icon-button" onClick={() => adjustHours(-1)} aria-label="Decrease hours per week">
+                <button className="icon-button" onClick={() => adjustHours(-1)} aria-label={t('roadmap.decreaseHours')}>
                   <Icon name="minus" size={13} />
                 </button>
-                <span className="hours-per-week-value">{profileQuery.data.hoursPerWeek}h/week</span>
-                <button className="icon-button" onClick={() => adjustHours(1)} aria-label="Increase hours per week">
+                <span className="hours-per-week-value">
+                  {t('roadmap.hoursPerWeek', { hours: profileQuery.data.hoursPerWeek })}
+                </span>
+                <button className="icon-button" onClick={() => adjustHours(1)} aria-label={t('roadmap.increaseHours')}>
                   <Icon name="plus" size={13} />
                 </button>
               </span>
             ) : null}
             {totalCount > 0 ? <ProgressRing pct={overallPct} /> : null}
             <Button variant="secondary" onClick={handleRegenerate} disabled={generateRoadmap.isPending}>
-              {generateRoadmap.isPending ? 'Regenerating…' : 'Regenerate'}
+              {generateRoadmap.isPending ? t('roadmap.regenerating') : t('roadmap.regenerate')}
             </Button>
           </>
         }
@@ -147,21 +151,17 @@ export function RoadmapPage() {
       ) : roadmapQuery.isError ? (
         <div className="error-state">
           <Icon name="alert" size={16} />
-          Couldn’t load the roadmap — is the API running on :3001?
+          {t('common.loadError', { thing: t('roadmap.title') })}
         </div>
       ) : items.length === 0 ? (
         <div className="empty-state">
           <span className="empty-icon">
             <Icon name="map" size={24} />
           </span>
-          <h2 className="empty-title">Generate your first roadmap</h2>
-          <p className="empty-blurb">
-            Waypoint compares market demand against your profile and packs a 6-week plan across all four
-            tracks. Scores get sharper as more jobs are crawled — but the DSA ladder and track fundamentals
-            work fine even with an empty Job Radar.
-          </p>
+          <h2 className="empty-title">{t('roadmap.emptyTitle')}</h2>
+          <p className="empty-blurb">{t('roadmap.emptyBlurb')}</p>
           <Button onClick={() => generateRoadmap.mutate()} disabled={generateRoadmap.isPending}>
-            {generateRoadmap.isPending ? 'Generating…' : 'Generate roadmap'}
+            {generateRoadmap.isPending ? t('roadmap.generating') : t('roadmap.generate')}
           </Button>
         </div>
       ) : (
@@ -180,7 +180,7 @@ export function RoadmapPage() {
                 >
                   <span className="roadmap-week-title">
                     <Icon name="chevron-down" size={16} />
-                    Week {weekIndex}
+                    {t('roadmap.week', { n: weekIndex })}
                   </span>
                   <span className="roadmap-week-progress">
                     <span className="week-progress-bar">
@@ -203,7 +203,7 @@ export function RoadmapPage() {
                           />
                           <div className="roadmap-topic-title-block">
                             <div className="roadmap-topic-title-row">
-                              <Badge tone={TRACK_TONE[item.topic.trackId]}>{TRACK_LABELS[item.topic.trackId]}</Badge>
+                              <Badge tone={TRACK_TONE[item.topic.trackId]}>{t(`track.${item.topic.trackId}`)}</Badge>
                               <DifficultyDots level={item.topic.difficulty} />
                               <span className="roadmap-topic-name">{item.topic.name}</span>
                             </div>

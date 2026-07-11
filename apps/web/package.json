@@ -15,8 +15,10 @@
     "@tanstack/react-query": "^5.101.2",
     "@waypoint/shared": "workspace:*",
     "@waypoint/ui": "workspace:*",
+    "i18next": "^26.3.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-i18next": "^17.0.9",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6.28.2",
     "recharts": "^3.9.2"

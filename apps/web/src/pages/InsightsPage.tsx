@@ -1,6 +1,8 @@
 import { Button, Card } from '@waypoint/ui';
 import type { SkillCategory } from '@waypoint/shared';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useGap, useInsightsSummary, useSkillDemand, useSkillTrend } from '../api/insights';
 import { useProfile } from '../api/profile';
 import { SkillDemandChart } from '../components/charts/SkillDemandChart';
@@ -10,20 +12,22 @@ import { PageHeader } from '../components/PageHeader';
 
 type CategoryFilter = 'all' | Extract<SkillCategory, 'frontend' | 'backend' | 'cloud'>;
 
-const CATEGORY_TABS: Array<{ key: CategoryFilter; label: string }> = [
-  { key: 'all', label: 'All' },
-  { key: 'frontend', label: 'Frontend' },
-  { key: 'backend', label: 'Backend' },
-  { key: 'cloud', label: 'Cloud' },
+const CATEGORY_TABS: Array<{ key: CategoryFilter; labelKey: string }> = [
+  { key: 'all', labelKey: 'insights.categoryAll' },
+  { key: 'frontend', labelKey: 'insights.categoryFrontend' },
+  { key: 'backend', labelKey: 'insights.categoryBackend' },
+  { key: 'cloud', labelKey: 'insights.categoryCloud' },
 ];
 
 const WINDOW_OPTIONS = [
-  { value: '7d', label: '7 days' },
-  { value: '30d', label: '30 days' },
-  { value: '90d', label: '90 days' },
+  { value: '7d', labelKey: 'insights.window7d' },
+  { value: '30d', labelKey: 'insights.window30d' },
+  { value: '90d', labelKey: 'insights.window90d' },
 ];
 
 export function InsightsPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [windowValue, setWindowValue] = useState('30d');
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [trendSkills, setTrendSkills] = useState<string[] | null>(null);
@@ -52,18 +56,18 @@ export function InsightsPage() {
   return (
     <>
       <PageHeader
-        title="Market Insights"
-        subtitle="What the market actually demands, extracted from every job description we crawl."
+        title={t('insights.title')}
+        subtitle={t('insights.subtitle')}
         actions={
           <select
             className="window-select"
             value={windowValue}
             onChange={(e) => setWindowValue(e.target.value)}
-            aria-label="Time window"
+            aria-label={t('insights.timeWindowAriaLabel')}
           >
             {WINDOW_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
-                {opt.label}
+                {t(opt.labelKey)}
               </option>
             ))}
           </select>
@@ -73,23 +77,23 @@ export function InsightsPage() {
       <div className="stat-tile-row">
         <div className="stat-tile">
           <div className="stat-tile-value">{summaryQuery.data?.jobsInWindow ?? '—'}</div>
-          <div className="stat-tile-label">Jobs in last 30 days</div>
+          <div className="stat-tile-label">{t('insights.statJobsInWindow')}</div>
         </div>
         <div className="stat-tile">
           <div className="stat-tile-value">
             {summaryQuery.data ? `${summaryQuery.data.sourcesHealthy}/${summaryQuery.data.sourcesTotal}` : '—'}
           </div>
-          <div className="stat-tile-label">Sources healthy</div>
+          <div className="stat-tile-label">{t('insights.statSourcesHealthy')}</div>
         </div>
         <div className="stat-tile">
           <div className="stat-tile-value">{summaryQuery.data?.medianSalary ?? '—'}</div>
-          <div className="stat-tile-label">Median salary (USD-parseable)</div>
+          <div className="stat-tile-label">{t('insights.statMedianSalary')}</div>
         </div>
         <div className="stat-tile">
           <div className="stat-tile-value" style={{ fontSize: 17 }}>
             {summaryQuery.data?.topGapSkills[0] ?? '—'}
           </div>
-          <div className="stat-tile-label">Top skill gap</div>
+          <div className="stat-tile-label">{t('insights.statTopGapSkill')}</div>
         </div>
       </div>
 
@@ -98,22 +102,16 @@ export function InsightsPage() {
           <span className="empty-icon">
             <Icon name="chart" size={24} />
           </span>
-          <h2 className="empty-title">No data in this window yet</h2>
-          <p className="empty-blurb">
-            Run a crawl from the Job Radar, then come back — insights need extracted
-            skills to chart anything.
-          </p>
+          <h2 className="empty-title">{t('insights.emptyTitle')}</h2>
+          <p className="empty-blurb">{t('insights.emptyBlurb')}</p>
         </div>
       ) : (
         <>
           <Card className="insights-card">
             <div className="insights-card-header">
               <div>
-                <h3 className="insights-card-title">Skill demand</h3>
-                <p className="insights-card-hint">
-                  Share of jobs in this window mentioning each skill. Accent bars are
-                  in your profile; outlined bars are gaps.
-                </p>
+                <h3 className="insights-card-title">{t('insights.skillDemandTitle')}</h3>
+                <p className="insights-card-hint">{t('insights.skillDemandHint')}</p>
               </div>
               <div className="filter-row" style={{ marginBottom: 0 }}>
                 {CATEGORY_TABS.map((tab) => (
@@ -122,7 +120,7 @@ export function InsightsPage() {
                     className={`filter-chip${category === tab.key ? ' active' : ''}`}
                     onClick={() => setCategory(tab.key)}
                   >
-                    {tab.label}
+                    {t(tab.labelKey)}
                   </button>
                 ))}
               </div>
@@ -130,7 +128,7 @@ export function InsightsPage() {
             {demandQuery.isLoading ? (
               <div className="skeleton-card" style={{ height: 240 }} />
             ) : demandData.length === 0 ? (
-              <p className="profile-section-hint">No skills in this category yet.</p>
+              <p className="profile-section-hint">{t('insights.noSkillsInCategory')}</p>
             ) : (
               <SkillDemandChart data={demandData} profileSkills={profileSkills} />
             )}
@@ -139,8 +137,8 @@ export function InsightsPage() {
           <Card className="insights-card">
             <div className="insights-card-header">
               <div>
-                <h3 className="insights-card-title">Trend</h3>
-                <p className="insights-card-hint">Weekly mentions over the last 90 days.</p>
+                <h3 className="insights-card-title">{t('insights.trendTitle')}</h3>
+                <p className="insights-card-hint">{t('insights.trendHint')}</p>
               </div>
               <div className="filter-row" style={{ marginBottom: 0 }}>
                 {(gapQuery.data ?? []).slice(0, 8).map((g) => {
@@ -169,33 +167,31 @@ export function InsightsPage() {
             ) : trendQuery.data ? (
               <SkillTrendChart trend={trendQuery.data} />
             ) : (
-              <p className="profile-section-hint">Pick up to 3 skills above to chart their trend.</p>
+              <p className="profile-section-hint">{t('insights.pickSkillsHint')}</p>
             )}
           </Card>
 
           <Card className="insights-card" style={{ marginBottom: 0 }}>
             <div className="insights-card-header">
               <div>
-                <h3 className="insights-card-title">Your gap</h3>
-                <p className="insights-card-hint">
-                  Skills the market wants most that aren't in your profile yet.
-                </p>
+                <h3 className="insights-card-title">{t('insights.yourGapTitle')}</h3>
+                <p className="insights-card-hint">{t('insights.yourGapHint')}</p>
               </div>
             </div>
             {gapQuery.isLoading ? (
               <div className="skeleton-card" style={{ height: 160 }} />
             ) : (gapQuery.data?.length ?? 0) === 0 ? (
-              <p className="profile-section-hint">No gap — your profile covers current demand.</p>
+              <p className="profile-section-hint">{t('insights.noGap')}</p>
             ) : (
               <div className="gap-list">
                 {gapQuery.data!.slice(0, 10).map((g) => (
                   <div key={g.skill} className="gap-row">
                     <span className="gap-row-skill">{g.skill}</span>
                     <span className="gap-row-meta">
-                      {g.jobCount} jobs · {Math.round(g.share * 100)}%
+                      {t('insights.jobsAndShare', { count: g.jobCount, pct: Math.round(g.share * 100) })}
                     </span>
-                    <Button variant="ghost" disabled title="Roadmap generation arrives in Phase 3">
-                      → Add to roadmap
+                    <Button variant="ghost" onClick={() => navigate('/roadmap')}>
+                      {t('insights.addToRoadmap')}
                     </Button>
                   </div>
                 ))}

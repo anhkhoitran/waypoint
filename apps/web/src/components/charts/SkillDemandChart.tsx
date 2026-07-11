@@ -1,4 +1,5 @@
 import type { SkillDemandItem } from '@waypoint/shared';
+import { useTranslation } from 'react-i18next';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartTooltip } from './ChartTooltip';
 
@@ -15,6 +16,7 @@ export function SkillDemandChart({
   data: SkillDemandItem[];
   profileSkills: Set<string>;
 }) {
+  const { t } = useTranslation();
   return (
     <ResponsiveContainer width="100%" height={Math.max(240, data.length * 30)}>
       <BarChart data={data} layout="vertical" margin={{ left: 8, right: 32, top: 4, bottom: 4 }}>
@@ -45,9 +47,12 @@ export function SkillDemandChart({
               <ChartTooltip
                 title={item.skill}
                 rows={[
-                  { label: 'Jobs mentioning it', value: item.jobCount },
-                  { label: 'Share of window', value: `${Math.round(item.share * 100)}%` },
-                  { label: 'In your profile', value: profileSkills.has(item.skill) ? 'Yes' : 'No' },
+                  { label: t('insights.tooltipJobsMentioning'), value: item.jobCount },
+                  { label: t('insights.tooltipShareOfWindow'), value: `${Math.round(item.share * 100)}%` },
+                  {
+                    label: t('insights.tooltipInProfile'),
+                    value: profileSkills.has(item.skill) ? t('insights.yes') : t('insights.no'),
+                  },
                 ]}
               />
             );

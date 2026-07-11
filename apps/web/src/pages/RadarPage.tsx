@@ -2,6 +2,7 @@ import { Badge, Button, Card } from '@waypoint/ui';
 import type { JobQuery, JobRecord } from '@waypoint/shared';
 import { SOURCE_LABELS } from '@waypoint/shared';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useJobs, useRunCrawl, useUpdateJob } from '../api/jobs';
 import { Icon } from '../components/Icon';
 import { JobDetailDrawer } from '../components/JobDetailDrawer';
@@ -15,15 +16,16 @@ type FilterKey = 'all' | 'remote' | 'vietnam' | 'senior' | 'saved';
 // "Vietnam" maps to itviec specifically — it's the only Vietnam-focused
 // source with a working adapter today (topdev/vietnamworks are seeded but
 // not yet crawled; see docs/plans/phase-1-crawler-and-job-feed.md).
-const filterChips: Array<{ key: FilterKey; label: string; query: Partial<JobQuery> }> = [
-  { key: 'all', label: 'All sources', query: {} },
-  { key: 'remote', label: 'Remote', query: { workMode: 'remote' } },
-  { key: 'vietnam', label: 'Vietnam', query: { source: 'itviec' } },
-  { key: 'senior', label: 'Senior', query: { seniority: 'senior' } },
-  { key: 'saved', label: 'Saved', query: { saved: true } },
+const filterChips: Array<{ key: FilterKey; labelKey: string; query: Partial<JobQuery> }> = [
+  { key: 'all', labelKey: 'radar.filters.allSources', query: {} },
+  { key: 'remote', labelKey: 'radar.filters.remote', query: { workMode: 'remote' } },
+  { key: 'vietnam', labelKey: 'radar.filters.vietnam', query: { source: 'itviec' } },
+  { key: 'senior', labelKey: 'radar.filters.senior', query: { seniority: 'senior' } },
+  { key: 'saved', labelKey: 'radar.filters.saved', query: { saved: true } },
 ];
 
 export function RadarPage() {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'newest' | 'match'>('newest');
@@ -43,12 +45,12 @@ export function RadarPage() {
   return (
     <>
       <PageHeader
-        title="Job Radar"
-        subtitle="Fresh roles from every source you track — deduplicated, normalized, scored."
+        title={t('radar.title')}
+        subtitle={t('radar.subtitle')}
         actions={
           <>
-            <Button variant="secondary" disabled title="Source management arrives in a later phase">
-              Manage sources
+            <Button variant="secondary" disabled title={t('radar.manageSourcesTooltip')}>
+              {t('radar.manageSources')}
             </Button>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
               {runCrawl.isPending ? (
@@ -56,15 +58,15 @@ export function RadarPage() {
                   <span className="spin" style={{ display: 'inline-flex' }}>
                     <Icon name="spinner" size={13} />
                   </span>
-                  Enqueuing…
+                  {t('radar.enqueuing')}
                 </span>
               ) : runCrawl.isSuccess && runCrawl.data ? (
                 <span className="inline-status">
-                  Started: {runCrawl.data.enqueued.map((s) => SOURCE_LABELS[s]).join(', ')}
+                  {t('radar.started', { sources: runCrawl.data.enqueued.map((s) => SOURCE_LABELS[s]).join(', ') })}
                 </span>
               ) : null}
               <Button onClick={() => runCrawl.mutate(undefined)} disabled={runCrawl.isPending}>
-                Run crawl
+                {t('radar.runCrawl')}
               </Button>
             </span>
           </>
@@ -79,7 +81,7 @@ export function RadarPage() {
           <input
             className="search-input"
             type="text"
-            placeholder="Search title or company…"
+            placeholder={t('radar.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -91,7 +93,7 @@ export function RadarPage() {
               className={`filter-chip${chip.key === activeFilter ? ' active' : ''}`}
               onClick={() => setActiveFilter(chip.key)}
             >
-              {chip.label}
+              {t(chip.labelKey)}
             </button>
           ))}
         </div>
@@ -99,10 +101,10 @@ export function RadarPage() {
           className="sort-select"
           value={sort}
           onChange={(e) => setSort(e.target.value as 'newest' | 'match')}
-          aria-label="Sort jobs"
+          aria-label={t('radar.sortAriaLabel')}
         >
-          <option value="newest">Newest</option>
-          <option value="match">Best match</option>
+          <option value="newest">{t('radar.sortNewest')}</option>
+          <option value="match">{t('radar.sortBestMatch')}</option>
         </select>
       </div>
 
@@ -115,7 +117,7 @@ export function RadarPage() {
       ) : jobsQuery.isError ? (
         <div className="error-state">
           <Icon name="alert" size={16} />
-          Couldn’t load jobs — is the API running on :3001?
+          {t('common.loadError', { thing: t('radar.title') })}
         </div>
       ) : jobs.length === 0 ? (
         <div className="empty-state">
@@ -123,16 +125,14 @@ export function RadarPage() {
             <Icon name="inbox" size={24} />
           </span>
           <h2 className="empty-title">
-            {isFiltered ? 'No jobs match these filters' : 'No jobs yet'}
+            {isFiltered ? t('radar.emptyTitleFiltered') : t('radar.emptyTitle')}
           </h2>
           <p className="empty-blurb">
-            {isFiltered
-              ? 'Try a different source, clear the search, or run a fresh crawl.'
-              : 'Run your first crawl to pull jobs from RemoteOK, WeWorkRemotely, HN Who’s Hiring, and ITviec.'}
+            {isFiltered ? t('radar.emptyBlurbFiltered') : t('radar.emptyBlurb')}
           </p>
           {!isFiltered && (
             <Button onClick={() => runCrawl.mutate(undefined)} disabled={runCrawl.isPending}>
-              Run crawl
+              {t('radar.runCrawl')}
             </Button>
           )}
         </div>
@@ -144,13 +144,15 @@ export function RadarPage() {
                 <span className="job-title">{job.title}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {job.matchScore ? (
-                    <Badge tone={scoreTone(job.matchScore.score)}>{job.matchScore.score}% match</Badge>
+                    <Badge tone={scoreTone(job.matchScore.score)}>
+                      {t('radar.matchPill', { score: job.matchScore.score })}
+                    </Badge>
                   ) : null}
                   {job.salaryText ? <span className="job-salary">{job.salaryText}</span> : null}
                   <div className="job-actions-row" onClick={(e) => e.stopPropagation()}>
                     <button
                       className={`icon-button${job.saved ? ' active' : ''}`}
-                      title={job.saved ? 'Unsave' : 'Save'}
+                      title={job.saved ? t('radar.unsave') : t('radar.save')}
                       onClick={() =>
                         updateJob.mutate({ id: job.id, patch: { saved: !job.saved } })
                       }
@@ -159,7 +161,7 @@ export function RadarPage() {
                     </button>
                     <button
                       className="icon-button"
-                      title="Hide this job"
+                      title={t('radar.hide')}
                       onClick={() => updateJob.mutate({ id: job.id, patch: { hidden: true } })}
                     >
                       <Icon name="eye-off" size={15} />
@@ -170,12 +172,12 @@ export function RadarPage() {
               <div className="job-meta">
                 {job.company}
                 <span aria-hidden="true">·</span>
-                {job.location ?? 'Location unknown'}
+                {job.location ?? t('radar.locationUnknown')}
               </div>
               <div className="job-badges">
                 <Badge tone="accent">{SOURCE_LABELS[job.source]}</Badge>
-                <Badge tone={workModeTone[job.workMode]}>{job.workMode}</Badge>
-                {job.seniority !== 'unknown' ? <Badge>{job.seniority}</Badge> : null}
+                <Badge tone={workModeTone[job.workMode]}>{t(`workMode.${job.workMode}`)}</Badge>
+                {job.seniority !== 'unknown' ? <Badge>{t(`seniority.${job.seniority}`)}</Badge> : null}
               </div>
               <div className="job-footer">
                 <div className="tag-row">
@@ -192,7 +194,7 @@ export function RadarPage() {
               </div>
               {job.matchScore && job.matchScore.missing.length > 0 ? (
                 <div className="job-gap">
-                  Gap: {job.matchScore.missing.slice(0, 6).join(', ')}
+                  {t('radar.gap', { skills: job.matchScore.missing.slice(0, 6).join(', ') })}
                 </div>
               ) : null}
             </Card>

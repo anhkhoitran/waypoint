@@ -1,23 +1,25 @@
 import { Badge, Button, Card } from '@waypoint/ui';
 import { sm2, type ReviewCardRecord, type Sm2Grade } from '@waypoint/shared';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useGradeCard, useReviewQueue, useReviewStats } from '../api/review';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
-import { TRACK_LABELS, TRACK_TONE } from '../lib/trackDisplay';
+import { TRACK_TONE } from '../lib/trackDisplay';
 
 interface GradeOption {
   grade: Sm2Grade;
-  label: string;
-  key: string;
+  labelKey: string;
+  cssKey: string;
+  shortcutKey: string;
 }
 
 const GRADE_OPTIONS: GradeOption[] = [
-  { grade: 0, label: 'Again', key: '1' },
-  { grade: 3, label: 'Hard', key: '2' },
-  { grade: 4, label: 'Good', key: '3' },
-  { grade: 5, label: 'Easy', key: '4' },
+  { grade: 0, labelKey: 'review.gradeAgain', cssKey: 'again', shortcutKey: '1' },
+  { grade: 3, labelKey: 'review.gradeHard', cssKey: 'hard', shortcutKey: '2' },
+  { grade: 4, labelKey: 'review.gradeGood', cssKey: 'good', shortcutKey: '3' },
+  { grade: 5, labelKey: 'review.gradeEasy', cssKey: 'easy', shortcutKey: '4' },
 ];
 
 function formatInterval(days: number): string {
@@ -29,6 +31,7 @@ function formatInterval(days: number): string {
 }
 
 export function ReviewPage() {
+  const { t } = useTranslation();
   const queueQuery = useReviewQueue(20);
   const statsQuery = useReviewStats();
   const gradeCard = useGradeCard();
@@ -68,7 +71,7 @@ export function ReviewPage() {
         return;
       }
       if (revealed) {
-        const opt = GRADE_OPTIONS.find((o) => o.key === e.key);
+        const opt = GRADE_OPTIONS.find((o) => o.shortcutKey === e.key);
         if (opt) handleGrade(opt.grade);
       }
     };
@@ -93,27 +96,24 @@ export function ReviewPage() {
 
   return (
     <>
-      <PageHeader
-        title="Daily Review"
-        subtitle="Spaced repetition for interview questions — a short queue, every day."
-      />
+      <PageHeader title={t('review.title')} subtitle={t('review.subtitle')} />
 
       {statsQuery.data ? (
         <div className="review-stats-strip">
           <div className="review-stat">
             <span className="review-stat-value">{statsQuery.data.dueToday}</span>
-            <span className="review-stat-label">Due today</span>
+            <span className="review-stat-label">{t('review.dueToday')}</span>
           </div>
           <div className="review-stat">
             <span className="review-stat-value">{statsQuery.data.doneToday}</span>
-            <span className="review-stat-label">Done today</span>
+            <span className="review-stat-label">{t('review.doneToday')}</span>
           </div>
           <div className="review-stat review-stat-streak">
             <span className="review-stat-value">
               <Icon name="flame" size={16} />
               {statsQuery.data.streak}
             </span>
-            <span className="review-stat-label">Day streak</span>
+            <span className="review-stat-label">{t('review.dayStreak')}</span>
           </div>
         </div>
       ) : null}
@@ -123,7 +123,7 @@ export function ReviewPage() {
       ) : queueQuery.isError ? (
         <div className="error-state">
           <Icon name="alert" size={16} />
-          Couldn’t load the review queue — is the API running on :3001?
+          {t('common.loadError', { thing: t('review.title') })}
         </div>
       ) : sessionQueue !== null && sessionQueue.length === 0 ? (
         <div className="empty-state">
@@ -132,13 +132,13 @@ export function ReviewPage() {
           </span>
           <h2 className="empty-title">
             {statsQuery.data && statsQuery.data.dueToday > 0
-              ? "Today's new-card limit reached"
-              : "You're all caught up"}
+              ? t('review.capReachedTitle')
+              : t('review.allCaughtUpTitle')}
           </h2>
           <p className="empty-blurb">
             {statsQuery.data && statsQuery.data.dueToday > 0
-              ? `${statsQuery.data.dueToday} card${statsQuery.data.dueToday === 1 ? '' : 's'} still due, but the daily new-card cap (10/day) has been reached — the rest unlock tomorrow, or as in-progress cards come due on their own schedule.`
-              : 'Nothing is due right now. New cards unlock as your roadmap progresses, and reviewed cards come back on their next SM-2 interval.'}
+              ? t('review.capReachedBlurb', { count: statsQuery.data.dueToday })
+              : t('review.allCaughtUpBlurb')}
           </p>
         </div>
       ) : sessionDone ? (
@@ -146,16 +146,16 @@ export function ReviewPage() {
           <span className="empty-icon">
             <Icon name="flame" size={24} />
           </span>
-          <h2 className="empty-title">Session complete</h2>
+          <h2 className="empty-title">{t('review.sessionCompleteTitle')}</h2>
           <p className="empty-blurb">
-            Reviewed {sessionLog.length} card{sessionLog.length === 1 ? '' : 's'} — current streak{' '}
-            {statsQuery.data?.streak ?? 0} day{statsQuery.data?.streak === 1 ? '' : 's'}.
+            {t('review.sessionCompleteReviewed', { count: sessionLog.length })} —{' '}
+            {t('review.sessionCompleteStreak', { count: statsQuery.data?.streak ?? 0 })}.
           </p>
           {perTrackBreakdown.length > 0 ? (
             <div className="review-session-breakdown">
               {perTrackBreakdown.map(([trackId, count]) => (
                 <Badge key={trackId} tone={TRACK_TONE[trackId as keyof typeof TRACK_TONE]}>
-                  {TRACK_LABELS[trackId as keyof typeof TRACK_LABELS]} · {count}
+                  {t(`track.${trackId}`)} · {count}
                 </Badge>
               ))}
             </div>
@@ -164,7 +164,7 @@ export function ReviewPage() {
       ) : currentCard ? (
         <Card className="review-card">
           <div className="review-card-top">
-            <Badge tone={TRACK_TONE[currentCard.trackId]}>{TRACK_LABELS[currentCard.trackId]}</Badge>
+            <Badge tone={TRACK_TONE[currentCard.trackId]}>{t(`track.${currentCard.trackId}`)}</Badge>
             <span className="review-card-progress">
               {index + 1} / {sessionQueue?.length}
             </span>
@@ -184,11 +184,11 @@ export function ReviewPage() {
                 {GRADE_OPTIONS.map((opt) => (
                   <button
                     key={opt.grade}
-                    className={`review-grade-button review-grade-${opt.label.toLowerCase()}`}
+                    className={`review-grade-button review-grade-${opt.cssKey}`}
                     onClick={() => handleGrade(opt.grade)}
                   >
-                    <span className="review-grade-label">{opt.label}</span>
-                    <span className="review-grade-key">{opt.key}</span>
+                    <span className="review-grade-label">{t(opt.labelKey)}</span>
+                    <span className="review-grade-key">{opt.shortcutKey}</span>
                     <span className="review-grade-interval">
                       {previews ? formatInterval(previews[opt.grade]!.dueInDays) : ''}
                     </span>
@@ -198,7 +198,7 @@ export function ReviewPage() {
             </>
           ) : (
             <Button onClick={() => setRevealed(true)} style={{ marginTop: 20 }}>
-              Show answer <span className="review-space-hint">space</span>
+              {t('review.showAnswer')} <span className="review-space-hint">{t('review.spaceHint')}</span>
             </Button>
           )}
         </Card>

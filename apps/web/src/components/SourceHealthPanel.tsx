@@ -1,4 +1,5 @@
 import { SOURCE_LABELS, type CrawlRunRecord, type JobSource } from '@waypoint/shared';
+import { useTranslation } from 'react-i18next';
 import { useCrawlRuns } from '../api/jobs';
 import { timeAgo } from '../lib/time';
 
@@ -12,6 +13,7 @@ const statusDotClass: Record<CrawlRunRecord['status'], string> = {
 };
 
 export function SourceHealthPanel() {
+  const { t } = useTranslation();
   const { data: runs } = useCrawlRuns();
   const runBySource = new Map((runs ?? []).map((run) => [run.sourceId, run]));
 
@@ -27,7 +29,9 @@ export function SourceHealthPanel() {
             />
             <span className="source-health-name">{SOURCE_LABELS[source]}</span>
             <span className="source-health-meta">
-              {run ? `${run.jobsNew} new · ${timeAgo(run.finishedAt)}` : 'never run'}
+              {run
+                ? t('sourceHealth.newAndTime', { count: run.jobsNew, time: timeAgo(run.finishedAt) })
+                : t('sourceHealth.neverRun')}
             </span>
           </div>
         );

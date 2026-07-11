@@ -1,6 +1,7 @@
 import { Button, Card } from '@waypoint/ui';
 import { SKILL_TAXONOMY, type SeniorityLevel, type SkillCategory, type WorkMode } from '@waypoint/shared';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useProfile, useUpdateProfile } from '../api/profile';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
@@ -15,14 +16,14 @@ const CATEGORY_ORDER: SkillCategory[] = [
   'practice',
 ];
 
-const CATEGORY_LABELS: Record<SkillCategory, string> = {
-  language: 'Languages',
-  frontend: 'Frontend',
-  backend: 'Backend',
-  database: 'Databases',
-  cloud: 'Cloud',
-  devops: 'DevOps',
-  practice: 'Practices',
+const CATEGORY_LABEL_KEY: Record<SkillCategory, string> = {
+  language: 'profile.categoryLanguage',
+  frontend: 'profile.categoryFrontend',
+  backend: 'profile.categoryBackend',
+  database: 'profile.categoryDatabase',
+  cloud: 'profile.categoryCloud',
+  devops: 'profile.categoryDevops',
+  practice: 'profile.categoryPractice',
 };
 
 const SKILLS_BY_CATEGORY: Record<SkillCategory, string[]> = CATEGORY_ORDER.reduce(
@@ -46,6 +47,7 @@ interface FormState {
 }
 
 export function ProfilePage() {
+  const { t } = useTranslation();
   const profileQuery = useProfile();
   const updateProfile = useUpdateProfile();
   const [form, setForm] = useState<FormState | null>(null);
@@ -68,7 +70,7 @@ export function ProfilePage() {
   if (profileQuery.isLoading || !form) {
     return (
       <>
-        <PageHeader title="Profile" subtitle="Your skills and preferences, used to score and match jobs." />
+        <PageHeader title={t('profile.title')} subtitle={t('profile.subtitle')} />
         <div className="skeleton-card" />
       </>
     );
@@ -77,10 +79,10 @@ export function ProfilePage() {
   if (profileQuery.isError) {
     return (
       <>
-        <PageHeader title="Profile" subtitle="Your skills and preferences, used to score and match jobs." />
+        <PageHeader title={t('profile.title')} subtitle={t('profile.subtitle')} />
         <div className="error-state">
           <Icon name="alert" size={16} />
-          Couldn’t load your profile — is the API running on :3001?
+          {t('common.loadError', { thing: t('profile.title') })}
         </div>
       </>
     );
@@ -122,18 +124,15 @@ export function ProfilePage() {
 
   return (
     <>
-      <PageHeader
-        title="Profile"
-        subtitle="Your skills and preferences, used to score and match jobs."
-      />
+      <PageHeader title={t('profile.title')} subtitle={t('profile.subtitle')} />
 
       <Card style={{ maxWidth: 720 }}>
         <div className="profile-section">
-          <h3 className="profile-section-title">Skills</h3>
-          <p className="profile-section-hint">Click to add or remove — used to compute match scores.</p>
+          <h3 className="profile-section-title">{t('profile.skillsTitle')}</h3>
+          <p className="profile-section-hint">{t('profile.skillsHint')}</p>
           {CATEGORY_ORDER.map((category) => (
             <div key={category} className="skill-category-block">
-              <p className="skill-category-label">{CATEGORY_LABELS[category]}</p>
+              <p className="skill-category-label">{t(CATEGORY_LABEL_KEY[category])}</p>
               <div className="chip-row">
                 {SKILLS_BY_CATEGORY[category].map((skill) => (
                   <button
@@ -150,12 +149,12 @@ export function ProfilePage() {
         </div>
 
         <div className="profile-section">
-          <h3 className="profile-section-title">Years of experience</h3>
+          <h3 className="profile-section-title">{t('profile.yearsOfExperience')}</h3>
           <div className="stepper">
             <button
               className="icon-button"
               onClick={() => setForm((p) => p && { ...p, yearsOfExperience: Math.max(0, p.yearsOfExperience - 1) })}
-              aria-label="Decrease years of experience"
+              aria-label={t('profile.decreaseYoe')}
             >
               <Icon name="minus" size={14} />
             </button>
@@ -163,7 +162,7 @@ export function ProfilePage() {
             <button
               className="icon-button"
               onClick={() => setForm((p) => p && { ...p, yearsOfExperience: p.yearsOfExperience + 1 })}
-              aria-label="Increase years of experience"
+              aria-label={t('profile.increaseYoe')}
             >
               <Icon name="plus" size={14} />
             </button>
@@ -171,7 +170,7 @@ export function ProfilePage() {
         </div>
 
         <div className="profile-section">
-          <h3 className="profile-section-title">Target seniority</h3>
+          <h3 className="profile-section-title">{t('profile.targetSeniority')}</h3>
           <div className="chip-row">
             {SENIORITY_OPTIONS.map((level) => (
               <button
@@ -179,14 +178,14 @@ export function ProfilePage() {
                 className={`filter-chip${form.targetSeniority === level ? ' active' : ''}`}
                 onClick={() => setForm((p) => p && { ...p, targetSeniority: level })}
               >
-                {level}
+                {t(`seniority.${level}`)}
               </button>
             ))}
           </div>
         </div>
 
         <div className="profile-section">
-          <h3 className="profile-section-title">Target work modes</h3>
+          <h3 className="profile-section-title">{t('profile.targetWorkModes')}</h3>
           <div className="chip-row">
             {WORK_MODE_OPTIONS.map((mode) => (
               <button
@@ -194,20 +193,20 @@ export function ProfilePage() {
                 className={`filter-chip${form.targetWorkModes.has(mode) ? ' active' : ''}`}
                 onClick={() => toggleWorkMode(mode)}
               >
-                {mode}
+                {t(`workMode.${mode}`)}
               </button>
             ))}
           </div>
         </div>
 
         <div className="profile-section">
-          <h3 className="profile-section-title">Study hours per week</h3>
-          <p className="profile-section-hint">Used to pace the Phase 3 prep roadmap into weekly chunks.</p>
+          <h3 className="profile-section-title">{t('profile.studyHoursPerWeek')}</h3>
+          <p className="profile-section-hint">{t('profile.studyHoursHint')}</p>
           <div className="stepper">
             <button
               className="icon-button"
               onClick={() => setForm((p) => p && { ...p, hoursPerWeek: Math.max(1, p.hoursPerWeek - 1) })}
-              aria-label="Decrease study hours per week"
+              aria-label={t('profile.decreaseStudyHours')}
             >
               <Icon name="minus" size={14} />
             </button>
@@ -215,7 +214,7 @@ export function ProfilePage() {
             <button
               className="icon-button"
               onClick={() => setForm((p) => p && { ...p, hoursPerWeek: Math.min(80, p.hoursPerWeek + 1) })}
-              aria-label="Increase study hours per week"
+              aria-label={t('profile.increaseStudyHours')}
             >
               <Icon name="plus" size={14} />
             </button>
@@ -223,8 +222,8 @@ export function ProfilePage() {
         </div>
 
         <div className="profile-section" style={{ marginBottom: 0 }}>
-          <h3 className="profile-section-title">Locations</h3>
-          <p className="profile-section-hint">Comma-separated (e.g. Ho Chi Minh City, Remote).</p>
+          <h3 className="profile-section-title">{t('profile.locations')}</h3>
+          <p className="profile-section-hint">{t('profile.locationsHint')}</p>
           <input
             className="profile-text-input"
             type="text"
@@ -235,13 +234,13 @@ export function ProfilePage() {
 
         <div className="profile-save-row">
           <Button onClick={handleSave} disabled={updateProfile.isPending}>
-            {updateProfile.isPending ? 'Saving…' : 'Save profile'}
+            {updateProfile.isPending ? t('profile.saving') : t('profile.saveProfile')}
           </Button>
           {updateProfile.isSuccess ? (
-            <span className="inline-status">Saved.</span>
+            <span className="inline-status">{t('profile.saved')}</span>
           ) : updateProfile.isError ? (
             <span className="inline-status" style={{ color: 'var(--danger)' }}>
-              Couldn’t save — check your inputs.
+              {t('profile.saveError')}
             </span>
           ) : null}
         </div>

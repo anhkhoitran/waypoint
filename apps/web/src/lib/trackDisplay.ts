@@ -2,12 +2,8 @@ import type { BadgeTone } from '@waypoint/ui';
 import type { ResourceKind, TrackId } from '@waypoint/shared';
 import type { IconName } from '../components/Icon';
 
-export const TRACK_LABELS: Record<TrackId, string> = {
-  dsa: 'DSA',
-  system_design: 'System Design',
-  cloud: 'Cloud',
-  web: 'Web',
-};
+// Track display names are translated — see the `track.*` keys in
+// src/i18n/locales/{en,vi}.json — use `t(\`track.${trackId}\`)` at call sites.
 
 export const TRACK_TONE: Record<TrackId, BadgeTone> = {
   dsa: 'accent',

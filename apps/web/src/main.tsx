@@ -2,6 +2,7 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/lora';
 import '@waypoint/ui/global.css';
 import './app.css';
+import './i18n';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';

@@ -1,6 +1,7 @@
 import { Badge, Button, Drawer } from '@waypoint/ui';
 import type { JobRecord } from '@waypoint/shared';
 import { SOURCE_LABELS } from '@waypoint/shared';
+import { useTranslation } from 'react-i18next';
 import { useUpdateJob } from '../api/jobs';
 import { scoreTone, workModeTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
@@ -13,6 +14,7 @@ export function JobDetailDrawer({
   job: JobRecord | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const updateJob = useUpdateJob();
 
   return (
@@ -25,20 +27,22 @@ export function JobDetailDrawer({
               <div className="job-meta">
                 {job.company}
                 <span aria-hidden="true">·</span>
-                {job.location ?? 'Location unknown'}
+                {job.location ?? t('radar.locationUnknown')}
               </div>
             </div>
-            <button className="icon-button" title="Close" onClick={onClose}>
+            <button className="icon-button" title={t('jobDrawer.close')} onClick={onClose}>
               <Icon name="x" size={16} />
             </button>
           </div>
 
           <div className="job-badges">
             <Badge tone="accent">{SOURCE_LABELS[job.source]}</Badge>
-            <Badge tone={workModeTone[job.workMode]}>{job.workMode}</Badge>
-            {job.seniority !== 'unknown' ? <Badge>{job.seniority}</Badge> : null}
+            <Badge tone={workModeTone[job.workMode]}>{t(`workMode.${job.workMode}`)}</Badge>
+            {job.seniority !== 'unknown' ? <Badge>{t(`seniority.${job.seniority}`)}</Badge> : null}
             {job.matchScore ? (
-              <Badge tone={scoreTone(job.matchScore.score)}>{job.matchScore.score}% match</Badge>
+              <Badge tone={scoreTone(job.matchScore.score)}>
+                {t('radar.matchPill', { score: job.matchScore.score })}
+              </Badge>
             ) : null}
           </div>
 
@@ -54,7 +58,7 @@ export function JobDetailDrawer({
             <div className="job-drawer-section">
               {job.matchScore.matched.length > 0 ? (
                 <div className="job-drawer-skills">
-                  <span className="job-drawer-skills-label">You have</span>
+                  <span className="job-drawer-skills-label">{t('jobDrawer.youHave')}</span>
                   {job.matchScore.matched.map((skill) => (
                     <span key={skill} className="tag tag-match">
                       {skill}
@@ -64,7 +68,7 @@ export function JobDetailDrawer({
               ) : null}
               {job.matchScore.missing.length > 0 ? (
                 <div className="job-drawer-skills">
-                  <span className="job-drawer-skills-label">Gap</span>
+                  <span className="job-drawer-skills-label">{t('jobDrawer.gap')}</span>
                   {job.matchScore.missing.map((skill) => (
                     <span key={skill} className="tag tag-gap">
                       {skill}
@@ -93,7 +97,7 @@ export function JobDetailDrawer({
               onClick={() => updateJob.mutate({ id: job.id, patch: { saved: !job.saved } })}
             >
               <Icon name={job.saved ? 'bookmark-filled' : 'bookmark'} size={15} />
-              {job.saved ? 'Saved' : 'Save'}
+              {job.saved ? t('jobDrawer.saved') : t('jobDrawer.save')}
             </Button>
             <Button
               variant="ghost"
@@ -103,7 +107,7 @@ export function JobDetailDrawer({
               }}
             >
               <Icon name="eye-off" size={15} />
-              Hide
+              {t('jobDrawer.hide')}
             </Button>
             <a
               className="job-drawer-original-link"
@@ -111,7 +115,7 @@ export function JobDetailDrawer({
               target="_blank"
               rel="noreferrer noopener"
             >
-              View original <Icon name="external-link" size={14} />
+              {t('jobDrawer.viewOriginal')} <Icon name="external-link" size={14} />
             </a>
           </div>
         </div>
