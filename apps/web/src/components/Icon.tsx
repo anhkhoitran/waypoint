@@ -95,6 +95,14 @@ const paths: Record<string, JSX.Element> = {
       <path d="M21 21l-4.3-4.3" />
     </>
   ),
+  gear: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 13a7.97 7.97 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a8 8 0 0 0-1.7-1L14.7 3h-4l-.6 2.9a8 8 0 0 0-1.7 1l-2.5-1-2 3.5L6 11a7.97 7.97 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a8 8 0 0 0 1.7 1l.6 2.9h4l.6-2.9a8 8 0 0 0 1.7-1l2.5 1 2-3.5-2.1-1.6Z" />
+    </>
+  ),
+  minus: <path d="M5 12h14" />,
+  plus: <path d="M12 5v14M5 12h14" />,
 };
 
 export type IconName = keyof typeof paths;

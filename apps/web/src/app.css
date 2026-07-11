@@ -476,3 +476,83 @@
     transform: rotate(360deg);
   }
 }
+
+/* Profile page ---------------------------------------------------------------- */
+
+.profile-section {
+  margin-bottom: 28px;
+}
+
+.profile-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.profile-section-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.skill-category-block {
+  margin-bottom: 14px;
+}
+
+.skill-category-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stepper-value {
+  min-width: 28px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.profile-text-input {
+  width: 100%;
+  max-width: 420px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: inherit;
+}
+
+.profile-text-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.profile-save-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}

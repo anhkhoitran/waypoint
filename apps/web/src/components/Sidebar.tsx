@@ -10,6 +10,10 @@ const nav: Array<{ to: string; label: string; icon: IconName }> = [
   { to: '/tracker', label: 'Applications', icon: 'kanban' },
 ];
 
+const secondaryNav: Array<{ to: string; label: string; icon: IconName }> = [
+  { to: '/profile', label: 'Profile', icon: 'gear' },
+];
+
 export function Sidebar() {
   const { theme, toggle } = useTheme();
   return (
@@ -27,6 +31,19 @@ export function Sidebar() {
           key={item.to}
           to={item.to}
           end={item.to === '/'}
+          className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+        >
+          <Icon name={item.icon} size={16} />
+          {item.label}
+        </NavLink>
+      ))}
+
+      <div style={{ borderTop: '1px solid var(--border)', margin: '10px 12px' }} />
+
+      {secondaryNav.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
           className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
         >
           <Icon name={item.icon} size={16} />

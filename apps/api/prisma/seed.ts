@@ -30,6 +30,25 @@ async function main() {
     });
   }
   console.log(`Seeded ${SKILL_TAXONOMY.length} skills.`);
+
+  // Only create the profile if it doesn't exist yet — re-seeding must never
+  // clobber edits made via the Profile page.
+  const existingProfile = await prisma.profile.findUnique({ where: { id: 'default' } });
+  if (!existingProfile) {
+    await prisma.profile.create({
+      data: {
+        id: 'default',
+        skills: ['react', 'nestjs', 'typescript', 'node', 'postgresql', 'mysql'],
+        yearsOfExperience: 3,
+        targetSeniority: 'mid',
+        targetWorkModes: ['remote', 'hybrid'],
+        locations: ['Ho Chi Minh City'],
+      },
+    });
+    console.log('Seeded default profile.');
+  } else {
+    console.log('Profile already exists, left untouched.');
+  }
 }
 
 main()

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isKnownSkill } from './taxonomy.js';
 
 /** Job sources Waypoint knows how to crawl. */
 export const JobSource = z.enum([
@@ -151,3 +152,26 @@ export {
   type SkillCategory,
   type SkillDefinition,
 } from './taxonomy.js';
+
+/** The project owner's profile, used for match scoring (and Phase 3 roadmap generation). */
+export const Profile = z.object({
+  id: z.string(),
+  skills: z.array(z.string()),
+  yearsOfExperience: z.number().int().nonnegative(),
+  targetSeniority: SeniorityLevel,
+  targetWorkModes: z.array(WorkMode),
+  locations: z.array(z.string()),
+});
+export type Profile = z.infer<typeof Profile>;
+
+/** GET/PUT /profile body — every skill must exist in the taxonomy. */
+export const ProfileInput = z.object({
+  skills: z.array(z.string()).refine((skills) => skills.every(isKnownSkill), {
+    message: 'skills must all be known taxonomy skill names',
+  }),
+  yearsOfExperience: z.number().int().nonnegative(),
+  targetSeniority: SeniorityLevel,
+  targetWorkModes: z.array(WorkMode),
+  locations: z.array(z.string()),
+});
+export type ProfileInput = z.infer<typeof ProfileInput>;

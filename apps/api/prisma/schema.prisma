@@ -73,3 +73,15 @@ model JobSkill {
 
   @@id([jobId, skillId])
 }
+
+// Single-row table: the project owner's profile, used for match scoring
+// and (Phase 3) roadmap generation. Always read/written via id "default".
+model Profile {
+  id                String   @id @default("default")
+  skills            String[]
+  yearsOfExperience Int
+  targetSeniority   String
+  targetWorkModes   String[]
+  locations         String[]
+  updatedAt         DateTime @updatedAt
+}

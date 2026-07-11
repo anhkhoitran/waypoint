@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { InsightsPage } from './pages/InsightsPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { RadarPage } from './pages/RadarPage';
 import { ReviewPage } from './pages/ReviewPage';
 import { RoadmapPage } from './pages/RoadmapPage';
@@ -18,6 +19,7 @@ export function App() {
             <Route path="/roadmap" element={<RoadmapPage />} />
             <Route path="/review" element={<ReviewPage />} />
             <Route path="/tracker" element={<TrackerPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </div>
       </main>
