@@ -204,6 +204,10 @@ export {
   type JobSkillInput,
 } from './match.js';
 
+/** Phase 3 prep tracks. */
+export const TrackId = z.enum(['dsa', 'system_design', 'cloud', 'web']);
+export type TrackId = z.infer<typeof TrackId>;
+
 /** GET /insights/skill-demand and /insights/gap query params. */
 export const InsightsSkillDemandQuery = z.object({
   window: z.string().optional(),

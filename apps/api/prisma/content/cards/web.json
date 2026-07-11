@@ -1,0 +1,176 @@
+[
+  {
+    "contentId": "web-001",
+    "topicSlug": "web-http-deep-dive",
+    "prompt": "What's the difference between HTTP methods PUT and PATCH?",
+    "answer": "PUT replaces the entire resource with the payload provided (idempotent full replacement). PATCH applies a partial update — only the fields provided are changed."
+  },
+  {
+    "contentId": "web-002",
+    "topicSlug": "web-http-deep-dive",
+    "prompt": "What does \"idempotent\" mean for an HTTP method, and which common methods are idempotent?",
+    "answer": "An idempotent request produces the same server state whether it's made once or multiple times. GET, PUT, DELETE, HEAD, OPTIONS are idempotent by spec; POST and PATCH generally are not."
+  },
+  {
+    "contentId": "web-003",
+    "topicSlug": "web-http-deep-dive",
+    "prompt": "What's the difference between a 401 and a 403 HTTP status code?",
+    "answer": "401 Unauthorized: the request lacks valid authentication credentials (who are you?). 403 Forbidden: the credentials are valid but the authenticated identity doesn't have permission for this action (I know who you are, but no)."
+  },
+  {
+    "contentId": "web-004",
+    "topicSlug": "web-http-deep-dive",
+    "prompt": "What's the main benefit HTTP/2 added over HTTP/1.1 for page load performance?",
+    "answer": "Multiplexing — multiple requests/responses can share a single TCP connection concurrently, removing the head-of-line blocking and per-connection overhead that HTTP/1.1 suffered from with parallel requests."
+  },
+  {
+    "contentId": "web-005",
+    "topicSlug": "web-auth",
+    "prompt": "What's the core trade-off between session-based auth and JWT-based auth?",
+    "answer": "Sessions require server-side storage (lookup on every request) but can be instantly revoked. JWTs are stateless and self-contained (no server lookup needed) but can't be revoked before expiry without extra infrastructure (e.g. a blocklist)."
+  },
+  {
+    "contentId": "web-006",
+    "topicSlug": "web-auth",
+    "prompt": "What three parts make up a JWT, and which part(s) are cryptographically protected?",
+    "answer": "Header, payload, and signature (header.payload.signature, base64url-encoded). Only the signature cryptographically protects against tampering — the header and payload are just encoded, not encrypted, so they shouldn't contain secrets."
+  },
+  {
+    "contentId": "web-007",
+    "topicSlug": "web-auth",
+    "prompt": "In OAuth 2.0, what's the difference between an access token and a refresh token?",
+    "answer": "An access token is short-lived and used to actually call protected APIs. A refresh token is longer-lived and used only to obtain a new access token once the old one expires, without requiring the user to log in again."
+  },
+  {
+    "contentId": "web-008",
+    "topicSlug": "web-auth",
+    "prompt": "Why should the `httpOnly` and `secure` flags be set on an auth cookie?",
+    "answer": "`httpOnly` prevents JavaScript from reading the cookie (mitigating XSS token theft). `secure` ensures the cookie is only sent over HTTPS, preventing it from leaking over plaintext connections."
+  },
+  {
+    "contentId": "web-009",
+    "topicSlug": "web-api-design",
+    "prompt": "What's the classic REST criticism that GraphQL directly addresses?",
+    "answer": "Over-fetching and under-fetching: a REST endpoint returns a fixed shape, so clients often get more fields than they need (over-fetch) or must make multiple round-trips to assemble what they need (under-fetch). GraphQL lets the client specify exactly the fields/shape it wants in one request."
+  },
+  {
+    "contentId": "web-010",
+    "topicSlug": "web-api-design",
+    "prompt": "What's the N+1 query problem, and how does it commonly show up in a GraphQL resolver?",
+    "answer": "Fetching a list, then making a separate query per item to get related data (N extra queries for N items). In GraphQL this happens when a nested field's resolver independently queries the database per parent — solved with request batching/dataloaders."
+  },
+  {
+    "contentId": "web-011",
+    "topicSlug": "web-api-design",
+    "prompt": "What's the difference between API versioning via the URL path (`/v2/users`) vs a header (`Accept: application/vnd.api.v2+json`)?",
+    "answer": "URL path versioning is explicit, cacheable, and easy to test in a browser, but clutters the URL and implies the resource itself changed. Header versioning keeps URLs stable (same resource identity) but is less visible/discoverable and harder to test manually."
+  },
+  {
+    "contentId": "web-012",
+    "topicSlug": "web-api-design",
+    "prompt": "What HTTP status code should a successful resource-creation POST return, and what header should accompany it?",
+    "answer": "201 Created, with a `Location` header pointing to the URL of the newly created resource."
+  },
+  {
+    "contentId": "web-013",
+    "topicSlug": "web-browser-internals",
+    "prompt": "What are the main stages of the critical rendering path, from HTML to pixels on screen?",
+    "answer": "Parse HTML → build the DOM; parse CSS → build the CSSOM; combine into the render tree; layout (compute geometry); paint (fill in pixels); composite (assemble layers on the GPU)."
+  },
+  {
+    "contentId": "web-014",
+    "topicSlug": "web-browser-internals",
+    "prompt": "Why does changing an element's `width` typically cost more than changing its `opacity` or `transform`?",
+    "answer": "Width changes trigger layout (reflow) — the browser must recompute geometry for the element and potentially its neighbors, then repaint and recomposite. `opacity`/`transform` can often be handled purely in the compositing stage, skipping layout and paint entirely."
+  },
+  {
+    "contentId": "web-015",
+    "topicSlug": "web-browser-internals",
+    "prompt": "Why does placing `<script>` tags at the end of `<body>` (or using `defer`) improve perceived page load speed?",
+    "answer": "A synchronous script in the `<head>` blocks HTML parsing until it downloads and executes. Deferring it (or moving it to the end) lets the browser parse and render the visible DOM first, improving perceived load time."
+  },
+  {
+    "contentId": "web-016",
+    "topicSlug": "web-caching-layers",
+    "prompt": "What's the difference between `Cache-Control: no-cache` and `Cache-Control: no-store`?",
+    "answer": "`no-cache` allows caching but requires revalidation with the server before using the cached copy. `no-store` forbids caching the response at all, anywhere."
+  },
+  {
+    "contentId": "web-017",
+    "topicSlug": "web-caching-layers",
+    "prompt": "What's the difference between an ETag and a Last-Modified header for cache validation?",
+    "answer": "Last-Modified is a timestamp — coarse-grained (second precision) and can miss changes that happen within the same second. ETag is a content fingerprint (hash) — precisely detects any change regardless of timing."
+  },
+  {
+    "contentId": "web-018",
+    "topicSlug": "web-caching-layers",
+    "prompt": "Name the three or so cache layers a typical request passes through between browser and database.",
+    "answer": "Browser cache → CDN/edge cache → application-level cache (e.g. Redis) → database query cache/buffer pool. Each layer trades off freshness for reduced latency/load further upstream."
+  },
+  {
+    "contentId": "web-019",
+    "topicSlug": "web-security",
+    "prompt": "What is a SQL injection attack, and what's the primary defense?",
+    "answer": "An attacker crafts input that gets concatenated directly into a SQL query, changing its meaning (e.g. `' OR 1=1 --`). The primary defense is parameterized queries/prepared statements, which keep user input as data, never as executable SQL syntax."
+  },
+  {
+    "contentId": "web-020",
+    "topicSlug": "web-security",
+    "prompt": "What's the difference between XSS and CSRF?",
+    "answer": "XSS (cross-site scripting): attacker injects malicious script that runs in a victim's browser under the vulnerable site's origin. CSRF (cross-site request forgery): attacker tricks a victim's browser into making an unwanted authenticated request to a site the victim is logged into, without needing to inject any script."
+  },
+  {
+    "contentId": "web-021",
+    "topicSlug": "web-security",
+    "prompt": "What's a CSRF token, and why does it stop the attack?",
+    "answer": "A unique, unpredictable value embedded in a form/request that the server validates against the user's session. An attacker's forged cross-site request can't know or include the correct token, so the server rejects it."
+  },
+  {
+    "contentId": "web-022",
+    "topicSlug": "web-security",
+    "prompt": "What does Content Security Policy (CSP) do, and what class of attack does it mitigate?",
+    "answer": "CSP is a header that restricts which sources scripts/styles/etc. can be loaded from. It mitigates XSS — even if an attacker injects a `<script>` tag, the browser refuses to execute it if its source isn't in the allowed policy."
+  },
+  {
+    "contentId": "web-023",
+    "topicSlug": "web-performance",
+    "prompt": "Name the three Core Web Vitals metrics and what each measures.",
+    "answer": "LCP (Largest Contentful Paint): loading performance — when the main content appears. INP/FID: interactivity — responsiveness to user input. CLS (Cumulative Layout Shift): visual stability — how much content unexpectedly shifts around."
+  },
+  {
+    "contentId": "web-024",
+    "topicSlug": "web-performance",
+    "prompt": "What's code splitting, and what performance problem does it solve?",
+    "answer": "Breaking a large JS bundle into smaller chunks loaded on demand (e.g. per route). It solves slow initial load caused by shipping code the user doesn't need yet for the current page."
+  },
+  {
+    "contentId": "web-025",
+    "topicSlug": "web-websockets",
+    "prompt": "What's the handshake mechanism that upgrades an HTTP connection to a WebSocket connection?",
+    "answer": "The client sends an HTTP request with an `Upgrade: websocket` header; if the server agrees, it responds with `101 Switching Protocols`, and the same TCP connection is then used for full-duplex WebSocket framing instead of HTTP."
+  },
+  {
+    "contentId": "web-026",
+    "topicSlug": "web-websockets",
+    "prompt": "When would you choose Server-Sent Events (SSE) over WebSockets?",
+    "answer": "When you only need server-to-client streaming (not bidirectional) — e.g. live notifications or a progress feed. SSE is simpler (plain HTTP, auto-reconnect built in) and avoids the complexity of a full-duplex protocol you don't need."
+  },
+  {
+    "contentId": "web-027",
+    "topicSlug": "web-db-indexing-transactions",
+    "prompt": "What's the trade-off of adding an index to a frequently-queried column?",
+    "answer": "Faster reads (lookups can use the index instead of a full table scan) at the cost of slower writes (every insert/update/delete must also maintain the index) and additional storage."
+  },
+  {
+    "contentId": "web-028",
+    "topicSlug": "web-db-indexing-transactions",
+    "prompt": "What do the ACID properties stand for, and which one guarantees a transaction is all-or-nothing?",
+    "answer": "Atomicity, Consistency, Isolation, Durability. Atomicity guarantees a transaction either fully commits or fully rolls back — no partial application of its changes."
+  },
+  {
+    "contentId": "web-029",
+    "topicSlug": "web-db-indexing-transactions",
+    "prompt": "What's a phantom read, and which transaction isolation level prevents it?",
+    "answer": "A phantom read happens when a transaction re-runs a query and sees new rows that another committed transaction inserted in the meantime. Serializable isolation (the strictest level) prevents phantom reads; Repeatable Read does not (in standard SQL, though PostgreSQL's implementation differs)."
+  }
+]

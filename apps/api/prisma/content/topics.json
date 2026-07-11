@@ -1,0 +1,523 @@
+[
+  {
+    "slug": "arrays-hashing",
+    "trackId": "dsa",
+    "name": "Arrays & Hashing",
+    "order": 1,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Arrays & Hashing", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Arrays & Hashing section.", "estMinutes": 20 },
+      { "title": "LeetCode — Array problems", "url": "https://leetcode.com/tag/array/", "kind": "problem_set", "note": "Work the easy/medium problems first.", "estMinutes": 120 },
+      { "title": "LeetCode — Hash Table problems", "url": "https://leetcode.com/tag/hash-table/", "kind": "problem_set", "estMinutes": 90 }
+    ]
+  },
+  {
+    "slug": "two-pointers",
+    "trackId": "dsa",
+    "name": "Two Pointers",
+    "order": 2,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Two Pointers", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Two Pointers section.", "estMinutes": 20 },
+      { "title": "LeetCode — Two Pointers problems", "url": "https://leetcode.com/tag/two-pointers/", "kind": "problem_set", "estMinutes": 100 }
+    ]
+  },
+  {
+    "slug": "sliding-window",
+    "trackId": "dsa",
+    "name": "Sliding Window",
+    "order": 3,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Sliding Window", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Sliding Window section.", "estMinutes": 20 },
+      { "title": "LeetCode — Sliding Window problems", "url": "https://leetcode.com/tag/sliding-window/", "kind": "problem_set", "estMinutes": 100 }
+    ]
+  },
+  {
+    "slug": "stack",
+    "trackId": "dsa",
+    "name": "Stack",
+    "order": 4,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Stack", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Stack section.", "estMinutes": 20 },
+      { "title": "LeetCode — Stack problems", "url": "https://leetcode.com/tag/stack/", "kind": "problem_set", "estMinutes": 90 }
+    ]
+  },
+  {
+    "slug": "binary-search",
+    "trackId": "dsa",
+    "name": "Binary Search",
+    "order": 5,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Binary Search", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Binary Search section.", "estMinutes": 20 },
+      { "title": "LeetCode — Binary Search problems", "url": "https://leetcode.com/tag/binary-search/", "kind": "problem_set", "estMinutes": 100 }
+    ]
+  },
+  {
+    "slug": "linked-list",
+    "trackId": "dsa",
+    "name": "Linked List",
+    "order": 6,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Linked List", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Linked List section.", "estMinutes": 20 },
+      { "title": "LeetCode — Linked List problems", "url": "https://leetcode.com/tag/linked-list/", "kind": "problem_set", "estMinutes": 100 }
+    ]
+  },
+  {
+    "slug": "trees",
+    "trackId": "dsa",
+    "name": "Trees",
+    "order": 7,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Trees", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Trees section.", "estMinutes": 25 },
+      { "title": "LeetCode — Tree problems", "url": "https://leetcode.com/tag/tree/", "kind": "problem_set", "estMinutes": 120 }
+    ]
+  },
+  {
+    "slug": "tries",
+    "trackId": "dsa",
+    "name": "Tries",
+    "order": 8,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Tries", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Trie section.", "estMinutes": 20 },
+      { "title": "LeetCode — Trie problems", "url": "https://leetcode.com/tag/trie/", "kind": "problem_set", "estMinutes": 80 }
+    ]
+  },
+  {
+    "slug": "heaps",
+    "trackId": "dsa",
+    "name": "Heaps & Priority Queues",
+    "order": 9,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Heap / Priority Queue", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Heap section.", "estMinutes": 20 },
+      { "title": "LeetCode — Heap problems", "url": "https://leetcode.com/tag/heap-priority-queue/", "kind": "problem_set", "estMinutes": 90 }
+    ]
+  },
+  {
+    "slug": "backtracking",
+    "trackId": "dsa",
+    "name": "Backtracking",
+    "order": 10,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Backtracking", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Backtracking section.", "estMinutes": 25 },
+      { "title": "LeetCode — Backtracking problems", "url": "https://leetcode.com/tag/backtracking/", "kind": "problem_set", "estMinutes": 120 }
+    ]
+  },
+  {
+    "slug": "graphs",
+    "trackId": "dsa",
+    "name": "Graphs",
+    "order": 11,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Graphs", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Graphs section.", "estMinutes": 30 },
+      { "title": "LeetCode — Graph problems", "url": "https://leetcode.com/tag/graph/", "kind": "problem_set", "estMinutes": 150 }
+    ]
+  },
+  {
+    "slug": "dp-1d",
+    "trackId": "dsa",
+    "name": "1-D Dynamic Programming",
+    "order": 12,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — 1-D DP", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the 1-D Dynamic Programming section.", "estMinutes": 30 },
+      { "title": "LeetCode — Dynamic Programming problems", "url": "https://leetcode.com/tag/dynamic-programming/", "kind": "problem_set", "note": "Start with climbing stairs / house robber style problems.", "estMinutes": 150 }
+    ]
+  },
+  {
+    "slug": "dp-2d",
+    "trackId": "dsa",
+    "name": "2-D Dynamic Programming",
+    "order": 13,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — 2-D DP", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the 2-D Dynamic Programming section.", "estMinutes": 30 },
+      { "title": "LeetCode — Dynamic Programming problems", "url": "https://leetcode.com/tag/dynamic-programming/", "kind": "problem_set", "note": "Move on to grid / two-string DP problems.", "estMinutes": 150 }
+    ]
+  },
+  {
+    "slug": "greedy",
+    "trackId": "dsa",
+    "name": "Greedy",
+    "order": 14,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Greedy", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Greedy section.", "estMinutes": 20 },
+      { "title": "LeetCode — Greedy problems", "url": "https://leetcode.com/tag/greedy/", "kind": "problem_set", "estMinutes": 100 }
+    ]
+  },
+  {
+    "slug": "intervals",
+    "trackId": "dsa",
+    "name": "Intervals",
+    "order": 15,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "NeetCode roadmap — Intervals", "url": "https://neetcode.io/roadmap", "kind": "course", "note": "Filter to the Intervals section.", "estMinutes": 20 },
+      { "title": "LeetCode — Array problems", "url": "https://leetcode.com/tag/array/", "kind": "problem_set", "note": "Filter for interval-merging/scheduling problems.", "estMinutes": 90 }
+    ]
+  },
+
+  {
+    "slug": "sd-estimation",
+    "trackId": "system_design",
+    "name": "Back-of-the-envelope Estimation",
+    "order": 1,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Step 2: Back-of-the-envelope calculations\" section.", "estMinutes": 30 },
+      { "title": "roadmap.sh — System Design", "url": "https://roadmap.sh/system-design", "kind": "course", "estMinutes": 20 }
+    ]
+  },
+  {
+    "slug": "sd-cap-consistency",
+    "trackId": "system_design",
+    "name": "CAP Theorem & Consistency Models",
+    "order": 2,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Consistency patterns\" and \"Availability patterns\" sections.", "estMinutes": 40 },
+      { "title": "roadmap.sh — System Design", "url": "https://roadmap.sh/system-design", "kind": "course", "estMinutes": 20 }
+    ]
+  },
+  {
+    "slug": "sd-load-balancing",
+    "trackId": "system_design",
+    "name": "Load Balancing",
+    "order": 3,
+    "difficulty": 1,
+    "skills": ["load balancing"],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Load balancer\" section.", "estMinutes": 25 },
+      { "title": "NGINX docs — Load Balancing", "url": "https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/", "kind": "article", "estMinutes": 20 }
+    ]
+  },
+  {
+    "slug": "sd-caching",
+    "trackId": "system_design",
+    "name": "Caching Strategies",
+    "order": 4,
+    "difficulty": 2,
+    "skills": ["redis"],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Caching\" section — cache-aside, write-through, write-behind.", "estMinutes": 30 },
+      { "title": "Redis docs", "url": "https://redis.io/docs/latest/develop/", "kind": "article", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "sd-message-queues",
+    "trackId": "system_design",
+    "name": "Message Queues",
+    "order": 5,
+    "difficulty": 2,
+    "skills": ["kafka", "rabbitmq"],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Asynchronism\" and \"Message queues\" sections.", "estMinutes": 30 },
+      { "title": "Apache Kafka — Introduction", "url": "https://kafka.apache.org/documentation/#gettingStarted", "kind": "article", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "sd-cdn",
+    "trackId": "system_design",
+    "name": "CDNs",
+    "order": 6,
+    "difficulty": 1,
+    "skills": ["cdn"],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Content delivery network\" section.", "estMinutes": 20 },
+      { "title": "Cloudflare Learning — What is a CDN?", "url": "https://www.cloudflare.com/learning/cdn/what-is-a-cdn/", "kind": "article", "estMinutes": 15 }
+    ]
+  },
+  {
+    "slug": "sd-sharding",
+    "trackId": "system_design",
+    "name": "Database Sharding & Partitioning",
+    "order": 7,
+    "difficulty": 3,
+    "skills": ["database design"],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Sharding\" and \"Federation\" sections.", "estMinutes": 35 },
+      { "title": "PostgreSQL docs — Partitioning", "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "sd-url-shortener",
+    "trackId": "system_design",
+    "name": "Design a URL Shortener",
+    "order": 8,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer — practice questions", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Design Pastebin.com (or Bit.ly)\" solution write-up.", "estMinutes": 45 },
+      { "title": "roadmap.sh — System Design", "url": "https://roadmap.sh/system-design", "kind": "course", "estMinutes": 20 }
+    ]
+  },
+  {
+    "slug": "sd-news-feed",
+    "trackId": "system_design",
+    "name": "Design a News Feed",
+    "order": 9,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer — practice questions", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Design the Facebook news feed\" solution write-up.", "estMinutes": 45 },
+      { "title": "High Scalability — architecture case studies", "url": "http://highscalability.com/", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "sd-chat-system",
+    "trackId": "system_design",
+    "name": "Design a Chat System",
+    "order": 10,
+    "difficulty": 3,
+    "skills": ["websockets"],
+    "resources": [
+      { "title": "System Design Primer — practice questions", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"Design a web crawler\" and messaging solution write-ups for architecture patterns.", "estMinutes": 40 },
+      { "title": "MDN — The WebSocket API", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API", "kind": "article", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "sd-rate-limiter",
+    "trackId": "system_design",
+    "name": "Design a Rate Limiter",
+    "order": 11,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read about token bucket, leaky bucket, and sliding-window rate limiting.", "estMinutes": 30 },
+      { "title": "Cloudflare Learning — Rate limiting", "url": "https://www.cloudflare.com/learning/bots/what-is-rate-limiting/", "kind": "article", "estMinutes": 15 }
+    ]
+  },
+  {
+    "slug": "sd-interview-method",
+    "trackId": "system_design",
+    "name": "The System Design Interview Method",
+    "order": 12,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "kind": "book_chapter", "note": "Read the \"How to approach a system design interview question\" section.", "estMinutes": 30 }
+    ]
+  },
+
+  {
+    "slug": "cloud-docker",
+    "trackId": "cloud",
+    "name": "Containers & Docker",
+    "order": 1,
+    "difficulty": 1,
+    "skills": ["docker"],
+    "resources": [
+      { "title": "Docker — Get Started", "url": "https://docs.docker.com/get-started/", "kind": "course", "estMinutes": 60 },
+      { "title": "roadmap.sh — DevOps", "url": "https://roadmap.sh/devops", "kind": "course", "note": "Focus on the containers section.", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "cloud-k8s-basics",
+    "trackId": "cloud",
+    "name": "Kubernetes Basics",
+    "order": 2,
+    "difficulty": 2,
+    "skills": ["kubernetes"],
+    "resources": [
+      { "title": "Kubernetes — Basics tutorial", "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/", "kind": "course", "estMinutes": 90 },
+      { "title": "Kubernetes docs — Concepts", "url": "https://kubernetes.io/docs/concepts/", "kind": "article", "note": "Pods, Deployments, Services.", "estMinutes": 45 }
+    ]
+  },
+  {
+    "slug": "cloud-aws-core",
+    "trackId": "cloud",
+    "name": "AWS Core Services (EC2/S3/RDS/Lambda/IAM)",
+    "order": 3,
+    "difficulty": 2,
+    "skills": ["aws"],
+    "resources": [
+      { "title": "AWS Free Tier", "url": "https://aws.amazon.com/free/", "kind": "course", "note": "Start with EC2, S3, and RDS free-tier hands-on labs.", "estMinutes": 60 },
+      { "title": "AWS — What is Lambda?", "url": "https://aws.amazon.com/lambda/", "kind": "article", "estMinutes": 20 },
+      { "title": "AWS — What is IAM?", "url": "https://aws.amazon.com/iam/", "kind": "article", "estMinutes": 20 }
+    ]
+  },
+  {
+    "slug": "cloud-networking-dns",
+    "trackId": "cloud",
+    "name": "Networking & DNS",
+    "order": 4,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "Cloudflare Learning — What is DNS?", "url": "https://www.cloudflare.com/learning/dns/what-is-dns/", "kind": "article", "estMinutes": 20 },
+      { "title": "MDN — DNS glossary", "url": "https://developer.mozilla.org/en-US/docs/Glossary/DNS", "kind": "article", "estMinutes": 10 },
+      { "title": "roadmap.sh — DevOps", "url": "https://roadmap.sh/devops", "kind": "course", "note": "Networking fundamentals section.", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "cloud-iac-terraform",
+    "trackId": "cloud",
+    "name": "Infrastructure as Code with Terraform",
+    "order": 5,
+    "difficulty": 2,
+    "skills": ["terraform", "infrastructure as code"],
+    "resources": [
+      { "title": "Terraform — Tutorials", "url": "https://developer.hashicorp.com/terraform/tutorials", "kind": "course", "estMinutes": 90 },
+      { "title": "roadmap.sh — DevOps", "url": "https://roadmap.sh/devops", "kind": "course", "note": "IaC section.", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "cloud-cicd",
+    "trackId": "cloud",
+    "name": "CI/CD Pipelines",
+    "order": 6,
+    "difficulty": 2,
+    "skills": ["ci/cd", "github actions", "jenkins"],
+    "resources": [
+      { "title": "GitHub Actions docs", "url": "https://docs.github.com/en/actions", "kind": "course", "estMinutes": 60 },
+      { "title": "Jenkins — User documentation", "url": "https://www.jenkins.io/doc/", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "cloud-observability",
+    "trackId": "cloud",
+    "name": "Observability: Logs, Metrics, Traces",
+    "order": 7,
+    "difficulty": 2,
+    "skills": ["monitoring", "logging", "prometheus", "grafana"],
+    "resources": [
+      { "title": "Prometheus — Overview", "url": "https://prometheus.io/docs/introduction/overview/", "kind": "article", "estMinutes": 30 },
+      { "title": "Grafana docs", "url": "https://grafana.com/docs/", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+
+  {
+    "slug": "web-http-deep-dive",
+    "trackId": "web",
+    "name": "HTTP Deep Dive",
+    "order": 1,
+    "difficulty": 1,
+    "skills": [],
+    "resources": [
+      { "title": "MDN — HTTP overview", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP", "kind": "article", "estMinutes": 40 },
+      { "title": "roadmap.sh — Backend", "url": "https://roadmap.sh/backend", "kind": "course", "note": "Internet & HTTP fundamentals section.", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "web-auth",
+    "trackId": "web",
+    "name": "Authentication: Sessions, JWT, OAuth",
+    "order": 2,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "MDN — HTTP cookies", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies", "kind": "article", "estMinutes": 20 },
+      { "title": "JWT.io — Introduction", "url": "https://jwt.io/introduction", "kind": "article", "estMinutes": 20 },
+      { "title": "OAuth 2.0", "url": "https://oauth.net/2/", "kind": "article", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "web-api-design",
+    "trackId": "web",
+    "name": "REST & GraphQL API Design",
+    "order": 3,
+    "difficulty": 2,
+    "skills": ["rest", "graphql", "api design"],
+    "resources": [
+      { "title": "GraphQL — Learn", "url": "https://graphql.org/learn/", "kind": "course", "estMinutes": 45 },
+      { "title": "roadmap.sh — Backend", "url": "https://roadmap.sh/backend", "kind": "course", "note": "API design section (REST, versioning, docs).", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "web-browser-internals",
+    "trackId": "web",
+    "name": "Browser Internals & Rendering",
+    "order": 4,
+    "difficulty": 3,
+    "skills": [],
+    "resources": [
+      { "title": "MDN — Web performance", "url": "https://developer.mozilla.org/en-US/docs/Web/Performance", "kind": "article", "note": "Read the critical rendering path pages.", "estMinutes": 40 },
+      { "title": "roadmap.sh — Frontend", "url": "https://roadmap.sh/frontend", "kind": "course", "note": "How browsers work section.", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "web-caching-layers",
+    "trackId": "web",
+    "name": "Caching Layers",
+    "order": 5,
+    "difficulty": 2,
+    "skills": ["redis", "cdn"],
+    "resources": [
+      { "title": "MDN — HTTP caching", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching", "kind": "article", "estMinutes": 30 },
+      { "title": "Redis docs", "url": "https://redis.io/docs/latest/develop/", "kind": "article", "estMinutes": 25 }
+    ]
+  },
+  {
+    "slug": "web-security",
+    "trackId": "web",
+    "name": "Web Security: OWASP Top 10",
+    "order": 6,
+    "difficulty": 2,
+    "skills": [],
+    "resources": [
+      { "title": "OWASP Top Ten", "url": "https://owasp.org/www-project-top-ten/", "kind": "article", "estMinutes": 45 },
+      { "title": "MDN — Web security", "url": "https://developer.mozilla.org/en-US/docs/Web/Security", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "web-performance",
+    "trackId": "web",
+    "name": "Web Performance",
+    "order": 7,
+    "difficulty": 2,
+    "skills": ["web performance"],
+    "resources": [
+      { "title": "web.dev", "url": "https://web.dev/", "kind": "course", "note": "Performance collection — Core Web Vitals.", "estMinutes": 45 },
+      { "title": "MDN — Web performance", "url": "https://developer.mozilla.org/en-US/docs/Web/Performance", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "web-websockets",
+    "trackId": "web",
+    "name": "WebSockets & Real-time",
+    "order": 8,
+    "difficulty": 2,
+    "skills": ["websockets"],
+    "resources": [
+      { "title": "MDN — The WebSocket API", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API", "kind": "article", "estMinutes": 30 }
+    ]
+  },
+  {
+    "slug": "web-db-indexing-transactions",
+    "trackId": "web",
+    "name": "Database Indexing & Transactions",
+    "order": 9,
+    "difficulty": 3,
+    "skills": ["database indexing", "database design"],
+    "resources": [
+      { "title": "PostgreSQL docs — Indexes", "url": "https://www.postgresql.org/docs/current/indexes.html", "kind": "article", "estMinutes": 40 },
+      { "title": "PostgreSQL docs — Transactions", "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html", "kind": "article", "estMinutes": 30 }
+    ]
+  }
+]

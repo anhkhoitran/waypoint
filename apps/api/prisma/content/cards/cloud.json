@@ -1,0 +1,170 @@
+[
+  {
+    "contentId": "cloud-001",
+    "topicSlug": "cloud-docker",
+    "prompt": "What's the difference between a Docker image and a Docker container?",
+    "answer": "An image is a read-only, versioned template (filesystem + metadata) built from a Dockerfile. A container is a running (or stopped) instance of an image, with its own writable layer on top."
+  },
+  {
+    "contentId": "cloud-002",
+    "topicSlug": "cloud-docker",
+    "prompt": "Why does Docker use layered images, and what's the practical benefit for build/deploy speed?",
+    "answer": "Each Dockerfile instruction creates a cached layer. Unchanged layers are reused across builds/pulls, so only the layers affected by a code change need rebuilding/re-transferring — much faster than re-shipping the whole image every time."
+  },
+  {
+    "contentId": "cloud-003",
+    "topicSlug": "cloud-docker",
+    "prompt": "What's the purpose of a `.dockerignore` file?",
+    "answer": "It excludes files (e.g. node_modules, .git, local .env) from the build context sent to the Docker daemon, keeping builds faster and images smaller, and avoiding accidentally baking secrets into an image."
+  },
+  {
+    "contentId": "cloud-004",
+    "topicSlug": "cloud-k8s-basics",
+    "prompt": "What's the relationship between a Pod, a Deployment, and a Service in Kubernetes?",
+    "answer": "A Pod is the smallest deployable unit (one or more containers sharing network/storage). A Deployment manages a set of replica Pods, handling rollouts and self-healing. A Service provides a stable network endpoint that load-balances traffic across the Deployment's Pods, even as individual Pods are replaced."
+  },
+  {
+    "contentId": "cloud-005",
+    "topicSlug": "cloud-k8s-basics",
+    "prompt": "Why do Pods need a Service in front of them instead of clients connecting to Pod IPs directly?",
+    "answer": "Pod IPs are ephemeral — Pods are recreated (with new IPs) on failure, scaling, or rollout. A Service gives a stable DNS name/IP that always routes to whichever Pods are currently healthy."
+  },
+  {
+    "contentId": "cloud-006",
+    "topicSlug": "cloud-k8s-basics",
+    "prompt": "What's a readiness probe vs a liveness probe in Kubernetes?",
+    "answer": "Liveness probe: determines if a container is stuck/dead and should be restarted. Readiness probe: determines if a container is ready to receive traffic — if it fails, the Pod is removed from the Service's endpoints without restarting it."
+  },
+  {
+    "contentId": "cloud-007",
+    "topicSlug": "cloud-aws-core",
+    "prompt": "What's the difference between EC2 and Lambda, in terms of the operational model?",
+    "answer": "EC2 gives you a persistent virtual machine you manage (OS, scaling, patching). Lambda is serverless — you deploy just a function, AWS handles provisioning/scaling, and you pay per invocation/duration instead of for idle server time."
+  },
+  {
+    "contentId": "cloud-008",
+    "topicSlug": "cloud-aws-core",
+    "prompt": "What's the difference between S3 and EBS for storage?",
+    "answer": "S3 is object storage accessed over HTTP(S), durable and highly available, good for files/backups/static assets, not mountable as a filesystem. EBS is block storage attached to a single EC2 instance (like a virtual hard drive), used for a running VM's filesystem."
+  },
+  {
+    "contentId": "cloud-009",
+    "topicSlug": "cloud-aws-core",
+    "prompt": "What does IAM stand for, and what's the principle of least privilege in this context?",
+    "answer": "Identity and Access Management. Least privilege means granting each user/role/service only the specific permissions it needs to do its job — nothing broader — to limit the blast radius if credentials are compromised."
+  },
+  {
+    "contentId": "cloud-010",
+    "topicSlug": "cloud-aws-core",
+    "prompt": "What's the difference between RDS and DynamoDB?",
+    "answer": "RDS is managed relational (SQL) database service (Postgres/MySQL/etc.) — good for structured data with relations/transactions. DynamoDB is a managed NoSQL key-value/document store — good for very high scale with simpler access patterns and predictable low-latency lookups."
+  },
+  {
+    "contentId": "cloud-011",
+    "topicSlug": "cloud-networking-dns",
+    "prompt": "What's the DNS resolution order: recursive resolver → root → TLD → authoritative — what does each step return?",
+    "answer": "Recursive resolver asks the root server, which points to the TLD server (e.g. for .com); the TLD server points to the domain's authoritative nameserver; the authoritative server returns the actual record (e.g. an A record with the IP)."
+  },
+  {
+    "contentId": "cloud-012",
+    "topicSlug": "cloud-networking-dns",
+    "prompt": "What's the difference between a CNAME and an A record?",
+    "answer": "An A record maps a domain name directly to an IPv4 address. A CNAME maps a domain name to another domain name (an alias), which is then resolved further — useful when the target IP might change."
+  },
+  {
+    "contentId": "cloud-013",
+    "topicSlug": "cloud-networking-dns",
+    "prompt": "What does DNS TTL control, and what's the trade-off of setting it very low vs very high?",
+    "answer": "TTL (time to live) controls how long resolvers cache a DNS record before re-querying. Low TTL means changes propagate faster but more DNS query load and latency; high TTL means fewer queries but slower propagation of changes (e.g. during a failover)."
+  },
+  {
+    "contentId": "cloud-014",
+    "topicSlug": "cloud-iac-terraform",
+    "prompt": "What problem does Infrastructure as Code solve that manually clicking through a cloud console doesn't?",
+    "answer": "It makes infrastructure changes versioned, reviewable, repeatable, and auditable — the same way code changes are — instead of undocumented manual clicks that are hard to reproduce or roll back."
+  },
+  {
+    "contentId": "cloud-015",
+    "topicSlug": "cloud-iac-terraform",
+    "prompt": "What's Terraform state, and why is it dangerous to lose it?",
+    "answer": "State is Terraform's record of what real-world resources correspond to your configuration. Without it, Terraform can't tell what already exists and may try to recreate resources or lose track of ones it should manage — hence state is usually stored remotely with locking (e.g. S3 + DynamoDB lock)."
+  },
+  {
+    "contentId": "cloud-016",
+    "topicSlug": "cloud-iac-terraform",
+    "prompt": "What does `terraform plan` do, and why run it before `terraform apply`?",
+    "answer": "It computes and displays the diff between current state and desired configuration without making changes, so you can review exactly what will be created/modified/destroyed before committing to it."
+  },
+  {
+    "contentId": "cloud-017",
+    "topicSlug": "cloud-cicd",
+    "prompt": "What's the difference between continuous integration and continuous deployment?",
+    "answer": "Continuous integration: automatically build and test every merged change, catching integration issues early. Continuous deployment: automatically ship every change that passes CI to production without manual approval (continuous *delivery* is the same but with a manual gate before prod)."
+  },
+  {
+    "contentId": "cloud-018",
+    "topicSlug": "cloud-cicd",
+    "prompt": "Why should a CI pipeline run in a clean, ephemeral environment rather than a long-lived dev machine?",
+    "answer": "It guarantees reproducibility — no leftover state, cached files, or manual tweaks from a previous run can silently make a build pass or fail differently than it would elsewhere (including production)."
+  },
+  {
+    "contentId": "cloud-019",
+    "topicSlug": "cloud-cicd",
+    "prompt": "What's a blue-green deployment, and what problem does it solve?",
+    "answer": "Two identical production environments (blue = current, green = new). Traffic is switched to green only after it's verified healthy, and blue stays on standby for instant rollback — minimizing downtime and deployment risk."
+  },
+  {
+    "contentId": "cloud-020",
+    "topicSlug": "cloud-observability",
+    "prompt": "What's the difference between a log, a metric, and a trace?",
+    "answer": "Log: a discrete timestamped event/message. Metric: a numeric measurement aggregated over time (e.g. request count, latency percentile). Trace: the end-to-end path of a single request across multiple services, showing where time was spent."
+  },
+  {
+    "contentId": "cloud-021",
+    "topicSlug": "cloud-observability",
+    "prompt": "Why do engineers care about p99 latency instead of just average latency?",
+    "answer": "Averages hide tail behavior — a fast average can coexist with a meaningful fraction of very slow requests. p99 (99th percentile) surfaces how bad the worst-experienced requests are, which matters for user experience and SLAs."
+  },
+  {
+    "contentId": "cloud-022",
+    "topicSlug": "cloud-observability",
+    "prompt": "What's the pull vs push model for metrics collection, and which does Prometheus use by default?",
+    "answer": "Pull: the monitoring system scrapes metrics endpoints on a schedule. Push: services actively send metrics to a collector. Prometheus defaults to pull — it scrapes a `/metrics` endpoint exposed by each service."
+  },
+  {
+    "contentId": "cloud-023",
+    "topicSlug": "cloud-observability",
+    "prompt": "What's an alert fatigue problem, and name one way to mitigate it.",
+    "answer": "Too many low-value or noisy alerts cause engineers to start ignoring alerts generally, including real incidents. Mitigation: alert on symptoms that affect users (e.g. error rate, latency SLO breach) rather than every internal anomaly, and tune thresholds to reduce false positives."
+  },
+  {
+    "contentId": "cloud-024",
+    "topicSlug": "cloud-docker",
+    "prompt": "Why is it a best practice to run containers as a non-root user?",
+    "answer": "If an attacker breaks out of the application into the container's OS layer, running as non-root limits what they can do inside the container and reduces the risk of a full container-escape leading to host compromise."
+  },
+  {
+    "contentId": "cloud-025",
+    "topicSlug": "cloud-k8s-basics",
+    "prompt": "What's a ConfigMap vs a Secret in Kubernetes?",
+    "answer": "Both inject configuration into Pods, but a Secret is intended for sensitive values (base64-encoded at rest, with tighter access control conventions) while a ConfigMap is for non-sensitive configuration."
+  },
+  {
+    "contentId": "cloud-026",
+    "topicSlug": "cloud-aws-core",
+    "prompt": "What's a VPC, and why does almost every AWS resource live inside one?",
+    "answer": "A Virtual Private Cloud is an isolated virtual network within AWS — it lets you control IP ranges, subnets, routing, and security boundaries, so resources are network-isolated from other AWS customers and from each other by design (public vs private subnets)."
+  },
+  {
+    "contentId": "cloud-027",
+    "topicSlug": "cloud-cicd",
+    "prompt": "What's a canary deployment, and how does it differ from blue-green?",
+    "answer": "A canary deployment rolls the new version out to a small percentage of traffic/instances first, gradually increasing if metrics look healthy. Unlike blue-green's all-or-nothing switch, it limits blast radius by exposing only a fraction of users to a bad release before catching it."
+  },
+  {
+    "contentId": "cloud-028",
+    "topicSlug": "cloud-iac-terraform",
+    "prompt": "What's a Terraform module, and why use one instead of copy-pasting the same resource block in multiple places?",
+    "answer": "A module is a reusable, parameterized bundle of resource definitions. Using one avoids drift between copies (a fix only needs to happen once) and makes intent clearer — e.g. a `vpc` module used consistently across environments."
+  }
+]

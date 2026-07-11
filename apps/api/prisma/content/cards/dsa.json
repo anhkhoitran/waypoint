@@ -1,0 +1,194 @@
+[
+  {
+    "contentId": "dsa-001",
+    "topicSlug": "arrays-hashing",
+    "prompt": "Given an array, you need to check for duplicates or complements (e.g. \"two sum\") in less than O(n²). Which data structure do you reach for, and why?",
+    "answer": "A hash map/set. It gives O(1) average lookup and insert, so you can check \"have I seen the complement of this value before?\" in a single O(n) pass instead of a nested loop."
+  },
+  {
+    "contentId": "dsa-002",
+    "topicSlug": "arrays-hashing",
+    "prompt": "What's the time and space complexity of building a frequency map (`Map<value, count>`) over an array of length n?",
+    "answer": "O(n) time (one pass, O(1) work per element) and O(n) space in the worst case (all elements distinct)."
+  },
+  {
+    "contentId": "dsa-003",
+    "topicSlug": "arrays-hashing",
+    "prompt": "Why does `Java`/`Python` string immutability matter when you're repeatedly concatenating strings in a loop?",
+    "answer": "Each concatenation allocates a new string, making a naive loop O(n²) overall. Use a mutable buffer (StringBuilder, list + join, etc.) to get O(n)."
+  },
+  {
+    "contentId": "dsa-004",
+    "topicSlug": "two-pointers",
+    "prompt": "You have a sorted array and need to find a pair that sums to a target. Which pattern applies, and what's the complexity?",
+    "answer": "Two pointers, one at each end, moving inward based on whether the current sum is too high or too low. O(n) time, O(1) space — better than the O(n²) brute force or O(n) space hash-map approach."
+  },
+  {
+    "contentId": "dsa-005",
+    "topicSlug": "two-pointers",
+    "prompt": "What's the key precondition that makes the two-pointer technique valid for a sum/comparison problem?",
+    "answer": "The input must be sorted (or sortable without losing needed information) so that moving a pointer inward has a predictable, monotonic effect on the result you're comparing."
+  },
+  {
+    "contentId": "dsa-006",
+    "topicSlug": "sliding-window",
+    "prompt": "\"Find the longest substring with at most K distinct characters\" — what pattern, and roughly how does the window move?",
+    "answer": "Sliding window. Expand the right edge, tracking a frequency map; when distinct count exceeds K, shrink from the left until valid again. O(n) time since each pointer moves forward at most n times."
+  },
+  {
+    "contentId": "dsa-007",
+    "topicSlug": "sliding-window",
+    "prompt": "How do you distinguish a sliding-window problem from a two-pointer problem in an interview?",
+    "answer": "Sliding window tracks a *contiguous subarray/substring* and a running aggregate (sum, count, distinct set) as the window grows/shrinks. Two pointers more generally converge from two positions without necessarily maintaining a contiguous range's aggregate."
+  },
+  {
+    "contentId": "dsa-008",
+    "topicSlug": "stack",
+    "prompt": "\"Valid parentheses\" and \"next greater element\" both scream one data structure. Which, and why?",
+    "answer": "A stack — both problems need to match/compare the most recently seen unmatched element, which is exactly LIFO access."
+  },
+  {
+    "contentId": "dsa-009",
+    "topicSlug": "stack",
+    "prompt": "What's a monotonic stack, and what class of problem does it solve efficiently?",
+    "answer": "A stack kept in increasing or decreasing order by popping elements that violate the order before pushing. It solves \"next greater/smaller element\" style problems in O(n) total instead of O(n²)."
+  },
+  {
+    "contentId": "dsa-010",
+    "topicSlug": "binary-search",
+    "prompt": "Binary search normally needs a sorted array. Name one class of problem where binary search still applies without an explicitly sorted array.",
+    "answer": "\"Binary search on the answer\" — when the *answer space* is monotonic (e.g. \"minimum capacity to ship packages in D days\"), you binary search over possible answers, checking feasibility at each midpoint."
+  },
+  {
+    "contentId": "dsa-011",
+    "topicSlug": "binary-search",
+    "prompt": "What's the time complexity of binary search, and why is `lo + (hi - lo) / 2` preferred over `(lo + hi) / 2`?",
+    "answer": "O(log n). The second form can integer-overflow when lo and hi are both large; the first avoids that by computing the offset instead of the sum."
+  },
+  {
+    "contentId": "dsa-012",
+    "topicSlug": "linked-list",
+    "prompt": "How do you detect a cycle in a linked list in O(1) space?",
+    "answer": "Floyd's tortoise and hare: two pointers moving at 1x and 2x speed. If there's a cycle they eventually meet; if the fast pointer reaches null, there's no cycle."
+  },
+  {
+    "contentId": "dsa-013",
+    "topicSlug": "linked-list",
+    "prompt": "Why is a dummy/sentinel head node a common trick in linked-list problems?",
+    "answer": "It removes special-casing for operations that affect the head (e.g. deleting the first node), since there's always a node before the \"real\" head to point at it."
+  },
+  {
+    "contentId": "dsa-014",
+    "topicSlug": "trees",
+    "prompt": "When do you use BFS (level order) vs DFS (pre/in/post-order) on a binary tree?",
+    "answer": "BFS when you need level-by-level information (e.g. \"right side view\", shortest path in an unweighted tree). DFS when you need to explore full root-to-leaf paths or compute properties bottom-up (e.g. height, diameter)."
+  },
+  {
+    "contentId": "dsa-015",
+    "topicSlug": "trees",
+    "prompt": "Given a Binary Search Tree, what does an in-order traversal produce, and why?",
+    "answer": "Values in sorted ascending order — because in-order visits left subtree (smaller values), then the node, then right subtree (larger values), and the BST invariant guarantees that ordering recursively."
+  },
+  {
+    "contentId": "dsa-016",
+    "topicSlug": "tries",
+    "prompt": "What problem shape is a trie built for, and what's its lookup complexity for a string of length m?",
+    "answer": "Prefix-based lookups (autocomplete, \"does any word start with this prefix\", word search in a dictionary). Lookup/insert is O(m), independent of how many words are stored."
+  },
+  {
+    "contentId": "dsa-017",
+    "topicSlug": "tries",
+    "prompt": "Why is a trie usually a better fit than a hash set for \"find all words with prefix X\"?",
+    "answer": "A hash set only answers exact-match queries in O(1); it can't efficiently enumerate all keys sharing a prefix. A trie makes prefix matching a simple walk down the tree from the root."
+  },
+  {
+    "contentId": "dsa-018",
+    "topicSlug": "heaps",
+    "prompt": "\"Find the kth largest element\" in a stream — what data structure, and what size do you keep it at?",
+    "answer": "A min-heap of size k. Push new elements in; if the heap exceeds size k, pop the minimum. The heap's root is always the kth largest seen so far."
+  },
+  {
+    "contentId": "dsa-019",
+    "topicSlug": "heaps",
+    "prompt": "What are the time complexities of push and pop on a binary heap of size n?",
+    "answer": "O(log n) for both — each operation may need to sift the element up or down the height of the tree."
+  },
+  {
+    "contentId": "dsa-020",
+    "topicSlug": "backtracking",
+    "prompt": "What's the core loop structure of a backtracking solution?",
+    "answer": "Choose a candidate → recurse with it included → undo the choice (backtrack) → try the next candidate. Prune branches early when a partial solution already violates a constraint."
+  },
+  {
+    "contentId": "dsa-021",
+    "topicSlug": "backtracking",
+    "prompt": "Why can backtracking solutions have exponential worst-case time, and how do you keep them practical?",
+    "answer": "Because they may explore every combination of choices in the worst case. Practicality comes from aggressive pruning (cutting a branch as soon as it can't lead to a valid answer) rather than exploring to the leaf first."
+  },
+  {
+    "contentId": "dsa-022",
+    "topicSlug": "graphs",
+    "prompt": "You need the shortest path in an unweighted graph. Which traversal, and why not DFS?",
+    "answer": "BFS — it explores nodes in increasing distance order from the source, so the first time you reach a node is guaranteed to be via a shortest path. DFS gives no such guarantee."
+  },
+  {
+    "contentId": "dsa-023",
+    "topicSlug": "graphs",
+    "prompt": "Dijkstra's algorithm finds shortest paths in a weighted graph — what's the one constraint on edge weights, and what algorithm do you use instead if it's violated?",
+    "answer": "Edge weights must be non-negative. With negative weights, use Bellman-Ford instead (slower, O(V·E), but correctly handles negative edges and detects negative cycles)."
+  },
+  {
+    "contentId": "dsa-024",
+    "topicSlug": "graphs",
+    "prompt": "How do you detect a cycle in a directed graph using DFS?",
+    "answer": "Track nodes in the current recursion stack (\"visiting\") separately from fully processed nodes (\"visited\"). If DFS reaches a node that's already \"visiting\", there's a cycle."
+  },
+  {
+    "contentId": "dsa-025",
+    "topicSlug": "dp-1d",
+    "prompt": "What two questions should you ask to recognize a DP problem?",
+    "answer": "1) Can the problem be broken into overlapping subproblems? 2) Does an optimal solution to the whole problem build from optimal solutions to its subproblems (optimal substructure)? If both are yes, DP applies."
+  },
+  {
+    "contentId": "dsa-026",
+    "topicSlug": "dp-1d",
+    "prompt": "\"Climbing stairs\" (n steps, 1 or 2 at a time) reduces to which classic sequence, and what's the recurrence?",
+    "answer": "Fibonacci. `ways(n) = ways(n-1) + ways(n-2)` — the last step taken was either a single step from n-1, or a double step from n-2."
+  },
+  {
+    "contentId": "dsa-027",
+    "topicSlug": "dp-2d",
+    "prompt": "For \"longest common subsequence\" of two strings of length m and n, what are the DP table dimensions and the recurrence when characters match?",
+    "answer": "An (m+1) x (n+1) table. When `s1[i] == s2[j]`: `dp[i][j] = dp[i-1][j-1] + 1`. Otherwise: `dp[i][j] = max(dp[i-1][j], dp[i][j-1])`."
+  },
+  {
+    "contentId": "dsa-028",
+    "topicSlug": "dp-2d",
+    "prompt": "How much can you usually reduce the space complexity of a 2-D DP solution that only reads the previous row?",
+    "answer": "From O(m·n) down to O(n) (or O(min(m,n))) by keeping only the previous row (or two rolling rows) instead of the full table."
+  },
+  {
+    "contentId": "dsa-029",
+    "topicSlug": "greedy",
+    "prompt": "What must be true about a problem for a greedy (locally optimal choice) algorithm to produce a globally optimal answer?",
+    "answer": "The greedy-choice property (a locally optimal choice leads to a globally optimal solution) and optimal substructure. Without proving these hold, a greedy approach can silently give a wrong answer."
+  },
+  {
+    "contentId": "dsa-030",
+    "topicSlug": "greedy",
+    "prompt": "\"Activity selection\" (max non-overlapping intervals) — what's the greedy rule, and why does sorting by end time work?",
+    "answer": "Sort by end time, then greedily pick the next activity whose start is ≥ the last picked activity's end. Ending earliest leaves the most room for future picks, which is the intuition behind why it's provably optimal."
+  },
+  {
+    "contentId": "dsa-031",
+    "topicSlug": "intervals",
+    "prompt": "\"Merge overlapping intervals\" — what's the first step, and why is it necessary?",
+    "answer": "Sort intervals by start time. Once sorted, you only need a single linear pass comparing each interval to the last merged one, since overlaps can only occur between adjacent intervals in that order."
+  },
+  {
+    "contentId": "dsa-032",
+    "topicSlug": "intervals",
+    "prompt": "How do you check if two intervals [a, b] and [c, d] overlap, in one condition?",
+    "answer": "`a <= d && c <= b` — each interval's start must not be after the other interval's end."
+  }
+]

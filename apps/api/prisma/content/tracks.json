@@ -1,0 +1,22 @@
+[
+  {
+    "id": "dsa",
+    "name": "Data Structures & Algorithms",
+    "description": "The NeetCode-style pattern ladder — the core patterns that cover the large majority of coding-interview questions."
+  },
+  {
+    "id": "system_design",
+    "name": "System Design",
+    "description": "Estimation, building blocks, and classic designs for high-level and low-level system design interviews."
+  },
+  {
+    "id": "cloud",
+    "name": "Cloud Infrastructure",
+    "description": "Containers, Kubernetes, AWS core services, networking, IaC, CI/CD, and observability."
+  },
+  {
+    "id": "web",
+    "name": "Web Fundamentals",
+    "description": "HTTP, auth, API design, browser internals, caching, security, performance, and database transactions."
+  }
+]

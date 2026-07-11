@@ -1,0 +1,170 @@
+[
+  {
+    "contentId": "sd-001",
+    "topicSlug": "sd-estimation",
+    "prompt": "Roughly how many bytes should you budget for one row of \"user_id (bigint) + timestamp + short string (~50 chars)\" when estimating storage for a table with 1 billion rows?",
+    "answer": "Roughly 8 (bigint) + 8 (timestamp) + ~50 (string) + overhead ≈ 100 bytes/row. At 1B rows that's ~100GB — the point of the exercise is the order of magnitude, not exact precision."
+  },
+  {
+    "contentId": "sd-002",
+    "topicSlug": "sd-estimation",
+    "prompt": "What's the rough QPS (queries per second) for a service with 100M requests/day, assuming roughly even traffic?",
+    "answer": "100,000,000 / 86,400 seconds ≈ 1,150 QPS average. Always call out that peak traffic is typically 2-5x average, so you'd design for several thousand QPS at peak."
+  },
+  {
+    "contentId": "sd-003",
+    "topicSlug": "sd-cap-consistency",
+    "prompt": "In the CAP theorem, what does the theorem actually say you must give up during a network partition?",
+    "answer": "You must choose between Consistency and Availability — a partitioned node can either refuse to respond (favoring consistency) or respond with possibly-stale data (favoring availability). Partition tolerance itself isn't optional in a distributed system."
+  },
+  {
+    "contentId": "sd-004",
+    "topicSlug": "sd-cap-consistency",
+    "prompt": "What's the difference between strong consistency and eventual consistency, and give one system that typically favors each.",
+    "answer": "Strong consistency: every read sees the latest write immediately (e.g. a traditional RDBMS like PostgreSQL). Eventual consistency: reads may see stale data briefly, but all replicas converge given no new writes (e.g. DNS, many NoSQL stores like DynamoDB in default mode)."
+  },
+  {
+    "contentId": "sd-005",
+    "topicSlug": "sd-load-balancing",
+    "prompt": "Name three load-balancing strategies and one scenario where each is the right fit.",
+    "answer": "Round robin (simple, stateless, roughly equal server capacity); least connections (uneven request durations); consistent hashing (need the same client/key to consistently hit the same backend, e.g. for caching)."
+  },
+  {
+    "contentId": "sd-006",
+    "topicSlug": "sd-load-balancing",
+    "prompt": "What's the difference between L4 (transport layer) and L7 (application layer) load balancing?",
+    "answer": "L4 routes based on IP/port without inspecting the request content (faster, protocol-agnostic). L7 inspects HTTP headers/paths/cookies to make smarter routing decisions (e.g. path-based routing, sticky sessions) at the cost of more overhead."
+  },
+  {
+    "contentId": "sd-007",
+    "topicSlug": "sd-caching",
+    "prompt": "Compare cache-aside vs write-through caching — which risks serving stale data, and which adds latency to every write?",
+    "answer": "Cache-aside (lazy loading): the app reads from cache, falls back to DB and populates cache on a miss. Risk: stale data if the DB changes without invalidating the cache. Write-through: every write goes to cache and DB together, avoiding staleness but adding write latency."
+  },
+  {
+    "contentId": "sd-008",
+    "topicSlug": "sd-caching",
+    "prompt": "What's cache stampede (thundering herd), and name one mitigation.",
+    "answer": "When a popular cache key expires, many concurrent requests miss simultaneously and all hit the database at once. Mitigations: request coalescing (only one request repopulates, others wait), or staggered/jittered TTLs so keys don't all expire together."
+  },
+  {
+    "contentId": "sd-009",
+    "topicSlug": "sd-message-queues",
+    "prompt": "Why introduce a message queue between two services instead of calling one directly?",
+    "answer": "Decoupling (producer and consumer can scale/fail independently), buffering against traffic spikes, and enabling async processing so the producer doesn't block waiting for the consumer to finish."
+  },
+  {
+    "contentId": "sd-010",
+    "topicSlug": "sd-message-queues",
+    "prompt": "What's the difference between at-least-once and exactly-once delivery, and which is Kafka's default guarantee?",
+    "answer": "At-least-once may redeliver a message after a failure (consumers must be idempotent). Exactly-once guarantees no duplicates but is harder/costlier to implement. Kafka defaults to at-least-once; exactly-once semantics require explicit transactional configuration."
+  },
+  {
+    "contentId": "sd-011",
+    "topicSlug": "sd-cdn",
+    "prompt": "What class of content is a CDN good for, and what's a case where a CDN doesn't help?",
+    "answer": "Static, cacheable content (images, JS/CSS bundles, video) benefits hugely — it's served from an edge node near the user. Highly personalized or real-time data (e.g. a user's private dashboard with live data) generally can't be cached at the edge."
+  },
+  {
+    "contentId": "sd-012",
+    "topicSlug": "sd-cdn",
+    "prompt": "What are the two main CDN caching strategies, push vs pull, and how do they differ?",
+    "answer": "Push: you proactively upload content to the CDN ahead of time. Pull: the CDN fetches from your origin server on the first request for a given path and caches it for subsequent requests."
+  },
+  {
+    "contentId": "sd-013",
+    "topicSlug": "sd-sharding",
+    "prompt": "What's the main risk of sharding by a naive incrementing key (e.g. `user_id % N`), and what's a common fix?",
+    "answer": "Adding or removing a shard (changing N) reshuffles almost every key's assignment, requiring a massive data migration. Consistent hashing minimizes reshuffling — only a fraction of keys move when the shard count changes."
+  },
+  {
+    "contentId": "sd-014",
+    "topicSlug": "sd-sharding",
+    "prompt": "What's a \"hot shard\", and name one cause.",
+    "answer": "A shard that receives disproportionate traffic/load compared to others. A common cause: sharding by a key with a skewed distribution (e.g. sharding by celebrity user ID, where one user gets far more activity than typical)."
+  },
+  {
+    "contentId": "sd-015",
+    "topicSlug": "sd-url-shortener",
+    "prompt": "Design a URL shortener: what's the core data model, and how do you generate short codes at scale without collisions?",
+    "answer": "A table mapping short_code → long_url (+ metadata). For codes: either hash + collision check, or a counter-based approach (base62-encode an auto-incrementing ID) which guarantees uniqueness without needing collision checks."
+  },
+  {
+    "contentId": "sd-016",
+    "topicSlug": "sd-url-shortener",
+    "prompt": "Where would you put a cache in a URL shortener's read path, and why does it matter here specifically?",
+    "answer": "In front of the redirect lookup (short_code → long_url). Reads vastly outnumber writes for this system, and redirects need to be very low-latency, so a cache (e.g. Redis) absorbing the hot codes meaningfully cuts database load and latency."
+  },
+  {
+    "contentId": "sd-017",
+    "topicSlug": "sd-news-feed",
+    "prompt": "What are the two main feed-generation strategies (fan-out on write vs fan-out on read), and when does each make sense?",
+    "answer": "Fan-out on write: precompute each follower's feed when a post is made — fast reads, but expensive writes for high-follower accounts. Fan-out on read: assemble the feed at request time by querying followed users' posts — cheap writes, slower reads. Most large systems use a hybrid (push for normal users, pull for celebrities)."
+  },
+  {
+    "contentId": "sd-018",
+    "topicSlug": "sd-news-feed",
+    "prompt": "Why is ranking (not just reverse-chronological order) a hard part of a news feed system?",
+    "answer": "It requires scoring each candidate post by relevance/engagement signals per-user in near real time, which means a separate ranking/ML-serving layer, feature pipelines, and careful latency budgeting on top of the raw feed-assembly problem."
+  },
+  {
+    "contentId": "sd-019",
+    "topicSlug": "sd-chat-system",
+    "prompt": "Why does a chat system need a persistent connection (WebSocket) instead of plain request/response HTTP?",
+    "answer": "The server needs to push new messages to clients as they arrive, without the client polling. A WebSocket keeps a full-duplex connection open so the server can send unprompted."
+  },
+  {
+    "contentId": "sd-020",
+    "topicSlug": "sd-chat-system",
+    "prompt": "In a chat system, how do you route a message to a recipient who might be connected to a different server than the sender?",
+    "answer": "Maintain a registry (e.g. in Redis) mapping user_id → which server/connection they're attached to; the sender's server looks this up and forwards the message to the recipient's server (often via a pub/sub layer) for delivery."
+  },
+  {
+    "contentId": "sd-021",
+    "topicSlug": "sd-rate-limiter",
+    "prompt": "Compare the token bucket and fixed window counter rate-limiting algorithms — which one avoids the \"burst at window boundary\" problem?",
+    "answer": "Fixed window counter can allow up to 2x the limit in a short burst around the window boundary (e.g. max requests at the end of one window plus max at the start of the next). Token bucket smooths this out since tokens refill continuously rather than resetting all at once."
+  },
+  {
+    "contentId": "sd-022",
+    "topicSlug": "sd-rate-limiter",
+    "prompt": "Where should a rate limiter live in a distributed system with multiple API servers, and why not just track counts in each server's local memory?",
+    "answer": "In a shared store (e.g. Redis) so all servers see the same counts. Local in-memory counts per server would let a client exceed the intended global limit by spreading requests across servers."
+  },
+  {
+    "contentId": "sd-023",
+    "topicSlug": "sd-interview-method",
+    "prompt": "What's the recommended first step in a system design interview, before drawing any boxes?",
+    "answer": "Clarify requirements and scope: functional requirements (what must it do), non-functional requirements (scale, latency, consistency needs), and constraints — then estimate scale before designing."
+  },
+  {
+    "contentId": "sd-024",
+    "topicSlug": "sd-interview-method",
+    "prompt": "Why should you explicitly state assumptions and trade-offs out loud during a system design interview?",
+    "answer": "The interviewer is evaluating your reasoning process, not just the final diagram. Stating trade-offs (e.g. \"I'm choosing eventual consistency here to prioritize availability\") demonstrates you understand there's no single correct answer, only informed choices."
+  },
+  {
+    "contentId": "sd-025",
+    "topicSlug": "sd-interview-method",
+    "prompt": "In a system design interview, when should you bring up specific technology names (Kafka, Redis, DynamoDB) vs describing capabilities generically?",
+    "answer": "Lead with the capability you need (\"a durable, ordered message queue\") and then optionally name a real system that provides it. Naming specifics too early can make the discussion about the tool instead of the requirements driving the choice."
+  },
+  {
+    "contentId": "sd-026",
+    "topicSlug": "sd-load-balancing",
+    "prompt": "What's a health check in the context of a load balancer, and what happens when one fails?",
+    "answer": "A periodic probe (e.g. HTTP GET /health) the load balancer sends to each backend. If a backend fails enough consecutive checks, the load balancer stops routing traffic to it until it recovers, avoiding sending requests to a broken instance."
+  },
+  {
+    "contentId": "sd-027",
+    "topicSlug": "sd-caching",
+    "prompt": "What eviction policy does a cache typically use when it's full, and why is LRU a common default?",
+    "answer": "LRU (Least Recently Used) evicts the item that hasn't been accessed in the longest time. It's a common default because recently-accessed data is statistically more likely to be accessed again soon (temporal locality)."
+  },
+  {
+    "contentId": "sd-028",
+    "topicSlug": "sd-sharding",
+    "prompt": "What is database federation (functional partitioning), and how does it differ from sharding?",
+    "answer": "Federation splits a database by function/feature (e.g. a separate DB for users, another for orders), while sharding splits a single logical table's rows across multiple databases by key. They're complementary — you can shard within one federated database."
+  }
+]

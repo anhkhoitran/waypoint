@@ -1,7 +1,15 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
-import { JobSource, SKILL_TAXONOMY } from '@waypoint/shared';
+import { JobSource, SKILL_TAXONOMY, TrackId } from '@waypoint/shared';
+import { validateContent } from './content-schema';
 
 const prisma = new PrismaClient();
+const CONTENT_DIR = join(__dirname, 'content');
+
+function readJson(relativePath: string): unknown {
+  return JSON.parse(readFileSync(join(CONTENT_DIR, relativePath), 'utf8'));
+}
 
 const displayNames: Record<JobSource, string> = {
   remoteok: 'RemoteOK',
@@ -49,6 +57,61 @@ async function main() {
   } else {
     console.log('Profile already exists, left untouched.');
   }
+
+  const content = validateContent({
+    tracks: readJson('tracks.json') as unknown[],
+    topics: readJson('topics.json') as unknown[],
+    cardsByTrack: Object.fromEntries(
+      TrackId.options.map((id) => [id, readJson(`cards/${id}.json`) as unknown[]]),
+    ),
+  });
+
+  for (const track of content.tracks) {
+    await prisma.track.upsert({
+      where: { id: track.id },
+      update: { name: track.name, description: track.description },
+      create: track,
+    });
+  }
+  console.log(`Seeded ${content.tracks.length} tracks.`);
+
+  let resourceCount = 0;
+  for (const topic of content.topics) {
+    const { resources, ...topicData } = topic;
+    const topicRow = await prisma.topic.upsert({
+      where: { slug: topic.slug },
+      update: topicData,
+      create: topicData,
+    });
+    for (const resource of resources) {
+      await prisma.resource.upsert({
+        where: { topicId_url: { topicId: topicRow.id, url: resource.url } },
+        update: resource,
+        create: { ...resource, topicId: topicRow.id },
+      });
+      resourceCount++;
+    }
+  }
+  console.log(`Seeded ${content.topics.length} topics and ${resourceCount} resources.`);
+
+  let cardCount = 0;
+  for (const [trackId, cards] of Object.entries(content.cardsByTrack)) {
+    for (const card of cards) {
+      await prisma.reviewCard.upsert({
+        where: { contentId: card.contentId },
+        // Only content fields are updated on re-seed — SM-2 review state
+        // (easiness/intervalDays/dueAt/etc.) must never be reset by reseeding.
+        update: {
+          prompt: card.prompt,
+          answer: card.answer,
+          topicSlug: card.topicSlug,
+        },
+        create: { ...card, trackId },
+      });
+      cardCount++;
+    }
+  }
+  console.log(`Seeded ${cardCount} review cards.`);
 }
 
 main()
