@@ -62,6 +62,39 @@ const paths: Record<string, JSX.Element> = {
       <path d="M12 7v5l3.5 2" />
     </>
   ),
+  bookmark: <path d="M6 4h12v16l-6-4-6 4V4Z" />,
+  'bookmark-filled': <path d="M6 4h12v16l-6-4-6 4V4Z" fill="currentColor" />,
+  'eye-off': (
+    <>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.1A9.9 9.9 0 0 1 12 5c5 0 9 4 10 7-.5 1.3-1.5 2.8-2.9 4.1M6.7 6.7C4.6 8.1 3.1 10 2 12c1 3 5 7 10 7 1.3 0 2.5-.3 3.6-.7" />
+      <path d="M9.9 10a3 3 0 0 0 4.1 4.2" />
+    </>
+  ),
+  alert: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v5" />
+      <circle cx="12" cy="16" r="0.5" fill="currentColor" />
+    </>
+  ),
+  inbox: (
+    <>
+      <path d="M3 12h4.5l1.5 3h6l1.5-3H21" />
+      <path d="M5.5 6h13l2.5 6v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-6Z" />
+    </>
+  ),
+  spinner: (
+    <>
+      <path d="M12 3a9 9 0 1 0 9 9" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.3-4.3" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;

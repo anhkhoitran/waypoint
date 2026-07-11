@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@waypoint/web", "dev"],
       "port": 5175
+    },
+    {
+      "name": "waypoint-api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@waypoint/api", "dev"],
+      "port": 3001
     }
   ]
 }

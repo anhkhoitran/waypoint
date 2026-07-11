@@ -11,6 +11,16 @@ export const JobSource = z.enum([
 ]);
 export type JobSource = z.infer<typeof JobSource>;
 
+/** Human-readable display name per source, for badges and the source health panel. */
+export const SOURCE_LABELS: Record<JobSource, string> = {
+  remoteok: 'RemoteOK',
+  weworkremotely: 'WeWorkRemotely',
+  hn_whos_hiring: 'HN Who’s Hiring',
+  itviec: 'ITviec',
+  topdev: 'TopDev',
+  vietnamworks: 'VietnamWorks',
+};
+
 export const WorkMode = z.enum(['remote', 'hybrid', 'onsite', 'unknown']);
 export type WorkMode = z.infer<typeof WorkMode>;
 
@@ -80,6 +90,20 @@ export const CrawlRunSummary = z.object({
   errors: z.array(z.string()),
 });
 export type CrawlRunSummary = z.infer<typeof CrawlRunSummary>;
+
+/** A persisted CrawlRun as returned by GET /crawl/runs. */
+export const CrawlRunRecord = z.object({
+  id: z.string(),
+  sourceId: JobSource,
+  status: CrawlRunStatus,
+  startedAt: z.coerce.date(),
+  finishedAt: z.coerce.date(),
+  jobsFound: z.number().int(),
+  jobsNew: z.number().int(),
+  jobsDuplicate: z.number().int(),
+  errors: z.array(z.string()),
+});
+export type CrawlRunRecord = z.infer<typeof CrawlRunRecord>;
 
 /** A persisted job as returned by the Jobs API — a NormalizedJob plus DB-assigned fields. */
 export const JobRecord = NormalizedJob.extend({

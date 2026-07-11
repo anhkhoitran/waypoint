@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.1.1",
     "@fontsource-variable/lora": "^5.1.1",
+    "@tanstack/react-query": "^5.101.2",
     "@waypoint/shared": "workspace:*",
     "@waypoint/ui": "workspace:*",
     "react": "^18.3.1",
