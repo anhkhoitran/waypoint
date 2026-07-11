@@ -342,6 +342,28 @@
   color: var(--text-muted);
 }
 
+.sort-select {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.job-gap {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 /* Job card actions (save/hide) ---------------------------------------------------------------- */
 
 .job-actions-row {

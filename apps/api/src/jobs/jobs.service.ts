@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Job, Prisma } from '@prisma/client';
-import type { JobListResponse, JobPatch, JobQuery, JobRecord } from '@waypoint/shared';
+import { matchScore, type JobListResponse, type JobPatch, type JobQuery, type JobRecord, type MatchProfile } from '@waypoint/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { decodeCursor, encodeCursor } from './cursor';
 
 const DEFAULT_LIMIT = 20;
 
-function toJobRecord(row: Job): JobRecord {
+type JobWithSkills = Job & {
+  skills: Array<{ confidence: number; skill: { name: string } }>;
+};
+
+function toJobRecord(row: Job, matchResult?: JobRecord['matchScore']): JobRecord {
   return {
     id: row.id,
     source: row.sourceId as JobRecord['source'],
@@ -25,6 +29,7 @@ function toJobRecord(row: Job): JobRecord {
     dedupKey: row.dedupKey,
     saved: row.saved,
     hidden: row.hidden,
+    matchScore: matchResult ?? null,
   };
 }
 
@@ -67,6 +72,7 @@ export class JobsService {
       where: { AND: conditions },
       orderBy: [{ fetchedAt: 'desc' }, { id: 'desc' }],
       take: limit + 1,
+      include: { skills: { include: { skill: true } } },
     });
 
     const hasMore = rows.length > limit;
@@ -74,7 +80,33 @@ export class JobsService {
     const last = page[page.length - 1];
     const nextCursor = hasMore && last ? encodeCursor(last) : null;
 
-    return { items: page.map(toJobRecord), nextCursor };
+    const profile = await this.prisma.profile.findUnique({ where: { id: 'default' } });
+    const matchProfile: MatchProfile | null = profile
+      ? {
+          skills: profile.skills,
+          targetSeniority: profile.targetSeniority as MatchProfile['targetSeniority'],
+          targetWorkModes: profile.targetWorkModes as MatchProfile['targetWorkModes'],
+        }
+      : null;
+
+    const items = page.map((row: JobWithSkills) => {
+      const matchResult = matchProfile
+        ? matchScore(
+            matchProfile,
+            row.skills.map((js) => ({ skill: js.skill.name, confidence: js.confidence })),
+            row.seniority as JobRecord['seniority'],
+            row.workMode as JobRecord['workMode'],
+          )
+        : null;
+      return toJobRecord(row, matchResult);
+    });
+
+    // "match" sort reorders within this fetched page only — see the JobQuery.sort doc comment.
+    if (query.sort === 'match') {
+      items.sort((a, b) => (b.matchScore?.score ?? -1) - (a.matchScore?.score ?? -1));
+    }
+
+    return { items, nextCursor };
   }
 
   async patch(id: string, body: JobPatch): Promise<JobRecord> {

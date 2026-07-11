@@ -111,10 +111,22 @@ export const JobRecord = NormalizedJob.extend({
   id: z.string(),
   saved: z.boolean(),
   hidden: z.boolean(),
+  /** Computed per-request against the profile; null when the job has no extracted skills yet. */
+  matchScore: z
+    .object({
+      score: z.number(),
+      matched: z.array(z.string()),
+      missing: z.array(z.string()),
+    })
+    .nullable()
+    .optional(),
 });
 export type JobRecord = z.infer<typeof JobRecord>;
 
 /** GET /jobs query params. */
+export const JobSort = z.enum(['newest', 'match']);
+export type JobSort = z.infer<typeof JobSort>;
+
 export const JobQuery = z.object({
   q: z.string().min(1).optional(),
   source: JobSource.optional(),
@@ -124,6 +136,13 @@ export const JobQuery = z.object({
   postedWithinDays: z.coerce.number().int().positive().optional(),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
+  /**
+   * "match" re-sorts by match score within the fetched page only — match
+   * score is computed per-request, not stored, so a true global best-match
+   * ordering under cursor pagination isn't available without materializing
+   * the score. "newest" (the default) is the real DB-level sort.
+   */
+  sort: JobSort.optional(),
 });
 export type JobQuery = z.infer<typeof JobQuery>;
 
@@ -175,3 +194,10 @@ export const ProfileInput = z.object({
   locations: z.array(z.string()),
 });
 export type ProfileInput = z.infer<typeof ProfileInput>;
+
+export {
+  matchScore,
+  type MatchResult,
+  type MatchProfile,
+  type JobSkillInput,
+} from './match.js';

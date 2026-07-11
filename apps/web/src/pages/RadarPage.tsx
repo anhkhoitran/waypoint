@@ -29,12 +29,19 @@ const workModeTone: Record<WorkMode, BadgeTone> = {
   unknown: 'neutral',
 };
 
+function scoreTone(score: number): BadgeTone {
+  if (score >= 70) return 'success';
+  if (score >= 40) return 'warning';
+  return 'neutral';
+}
+
 export function RadarPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<'newest' | 'match'>('newest');
 
   const activeQuery = filterChips.find((f) => f.key === activeFilter)!.query;
-  const query: JobQuery = { ...activeQuery, q: search.trim() || undefined, limit: 20 };
+  const query: JobQuery = { ...activeQuery, q: search.trim() || undefined, limit: 20, sort };
 
   const jobsQuery = useJobs(query);
   const updateJob = useUpdateJob();
@@ -98,6 +105,15 @@ export function RadarPage() {
             </button>
           ))}
         </div>
+        <select
+          className="sort-select"
+          value={sort}
+          onChange={(e) => setSort(e.target.value as 'newest' | 'match')}
+          aria-label="Sort jobs"
+        >
+          <option value="newest">Newest</option>
+          <option value="match">Best match</option>
+        </select>
       </div>
 
       {jobsQuery.isLoading ? (
@@ -137,6 +153,9 @@ export function RadarPage() {
               <div className="job-card-top">
                 <span className="job-title">{job.title}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {job.matchScore ? (
+                    <Badge tone={scoreTone(job.matchScore.score)}>{job.matchScore.score}% match</Badge>
+                  ) : null}
                   {job.salaryText ? <span className="job-salary">{job.salaryText}</span> : null}
                   <div className="job-actions-row">
                     <button
@@ -181,6 +200,11 @@ export function RadarPage() {
                   {timeAgo(job.postedAt)}
                 </span>
               </div>
+              {job.matchScore && job.matchScore.missing.length > 0 ? (
+                <div className="job-gap">
+                  Gap: {job.matchScore.missing.slice(0, 6).join(', ')}
+                </div>
+              ) : null}
             </Card>
           ))}
         </div>
