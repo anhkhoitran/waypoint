@@ -80,3 +80,41 @@ export const CrawlRunSummary = z.object({
   errors: z.array(z.string()),
 });
 export type CrawlRunSummary = z.infer<typeof CrawlRunSummary>;
+
+/** A persisted job as returned by the Jobs API — a NormalizedJob plus DB-assigned fields. */
+export const JobRecord = NormalizedJob.extend({
+  id: z.string(),
+  saved: z.boolean(),
+  hidden: z.boolean(),
+});
+export type JobRecord = z.infer<typeof JobRecord>;
+
+/** GET /jobs query params. */
+export const JobQuery = z.object({
+  q: z.string().min(1).optional(),
+  source: JobSource.optional(),
+  workMode: WorkMode.optional(),
+  seniority: SeniorityLevel.optional(),
+  saved: z.coerce.boolean().optional(),
+  postedWithinDays: z.coerce.number().int().positive().optional(),
+  cursor: z.string().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+});
+export type JobQuery = z.infer<typeof JobQuery>;
+
+export const JobListResponse = z.object({
+  items: z.array(JobRecord),
+  nextCursor: z.string().nullable(),
+});
+export type JobListResponse = z.infer<typeof JobListResponse>;
+
+/** PATCH /jobs/:id body. */
+export const JobPatch = z
+  .object({
+    saved: z.boolean().optional(),
+    hidden: z.boolean().optional(),
+  })
+  .refine((body) => body.saved !== undefined || body.hidden !== undefined, {
+    message: 'at least one of saved/hidden must be provided',
+  });
+export type JobPatch = z.infer<typeof JobPatch>;
