@@ -1,7 +1,7 @@
 import type { CrawlRunSummary, NormalizedJob, RawJob } from '@waypoint/shared';
 import { describe, expect, it } from 'vitest';
 import type { DiscoveredJob, SourceAdapter } from '../adapter.js';
-import { CrawlPipeline, type JobStore } from '../pipeline.js';
+import { CrawlPipeline, stripHtml, type JobStore } from '../pipeline.js';
 
 class InMemoryJobStore implements JobStore {
   saved: NormalizedJob[] = [];
@@ -155,5 +155,48 @@ describe('CrawlPipeline', () => {
     expect(result.summary.jobsFound).toBe(0);
     expect(result.summary.errors[0]).toContain('network down');
     expect(store.runs).toHaveLength(1);
+  });
+
+  it('decodes HTML entities in descriptionText, not just literal tags', async () => {
+    const store = new InMemoryJobStore();
+    const pipeline = new CrawlPipeline(store);
+    const discovered: DiscoveredJob[] = [
+      {
+        externalId: '1',
+        url: 'https://example.com/1',
+        raw: makeRaw('1', {
+          descriptionHtml: '<p>Node.js &amp; TypeScript.&nbsp;Apply w/ &quot;résumé&quot;.</p>',
+        }),
+      },
+    ];
+    const adapter: SourceAdapter = {
+      source: 'remoteok',
+      displayName: 'RemoteOK',
+      discover: async () => discovered,
+      extract: async () => {
+        throw new Error('should not be called when raw is attached');
+      },
+    };
+
+    const result = await pipeline.run(adapter);
+    expect(result.newJobs[0]!.descriptionText).toBe('Node.js & TypeScript. Apply w/ "résumé".');
+  });
+});
+
+describe('stripHtml', () => {
+  it('strips tags and decodes common entities', () => {
+    expect(stripHtml('<div>a &amp; b</div>')).toBe('a & b');
+    expect(stripHtml('one&nbsp;two')).toBe('one two');
+    expect(stripHtml('&lt;script&gt;')).toBe('<script>');
+    expect(stripHtml("it&#39;s")).toBe("it's");
+  });
+
+  it('collapses whitespace left over after tag stripping', () => {
+    expect(stripHtml('<p>a</p>\n\n<p>b</p>')).toBe('a b');
+  });
+
+  it('decodes numeric character references, hex and decimal', () => {
+    expect(stripHtml('C&#x2F;C++')).toBe('C/C++');
+    expect(stripHtml('caf&#233;')).toBe('café');
   });
 });

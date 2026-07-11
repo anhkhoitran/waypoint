@@ -94,9 +94,15 @@ export function parseDetail(html: string): ItviecDetail {
     company = html.match(selectors.employerName)?.[1]?.trim();
   }
 
-  const startIdx = html.indexOf(selectors.descriptionStartMarker);
+  const markerIdx = html.indexOf(selectors.descriptionStartMarker);
   let descriptionHtml: string | undefined;
-  if (startIdx !== -1) {
+  if (markerIdx !== -1) {
+    // The marker is an attribute inside the container's opening tag (e.g.
+    // `<div data-jobs--jd-scroll-target="jobContent">`) — slice from just
+    // after that tag's closing `>` so the attribute text itself and the
+    // orphaned `>` don't leak into the description as literal characters.
+    const tagEndIdx = html.indexOf('>', markerIdx);
+    const startIdx = tagEndIdx !== -1 ? tagEndIdx + 1 : markerIdx;
     const endIdx = html.indexOf(selectors.descriptionEndMarker, startIdx);
     descriptionHtml = html.slice(startIdx, endIdx !== -1 ? endIdx : undefined);
   }

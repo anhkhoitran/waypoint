@@ -62,6 +62,14 @@ describe('parseDetail', () => {
     expect(detail.descriptionHtml).not.toContain('unrelated recommended jobs section');
   });
 
+  it('does not leak the marker attribute itself into descriptionHtml', () => {
+    const detail = parseDetail(detailHtml);
+    expect(detail.descriptionHtml).not.toContain('data-jobs--jd-scroll-target');
+    // The container's opening tag closes with a lone `>` right at the marker —
+    // regression check that this orphaned character doesn't survive either.
+    expect(detail.descriptionHtml?.trimStart()).not.toMatch(/^>/);
+  });
+
   it('falls back to scraping h1/employer-name when the data-layer attribute is absent', () => {
     const detail = parseDetail(detailFallbackHtml);
     expect(detail.title).toBe('Backend Engineer (Java/Spring)');
