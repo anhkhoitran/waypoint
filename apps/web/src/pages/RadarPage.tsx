@@ -1,12 +1,13 @@
 import { Badge, Button, Card } from '@waypoint/ui';
-import type { BadgeTone } from '@waypoint/ui';
-import type { JobQuery, JobRecord, WorkMode } from '@waypoint/shared';
+import type { JobQuery, JobRecord } from '@waypoint/shared';
 import { SOURCE_LABELS } from '@waypoint/shared';
 import { useState } from 'react';
 import { useJobs, useRunCrawl, useUpdateJob } from '../api/jobs';
 import { Icon } from '../components/Icon';
+import { JobDetailDrawer } from '../components/JobDetailDrawer';
 import { PageHeader } from '../components/PageHeader';
 import { SourceHealthPanel } from '../components/SourceHealthPanel';
+import { scoreTone, workModeTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
 
 type FilterKey = 'all' | 'remote' | 'vietnam' | 'senior' | 'saved';
@@ -22,23 +23,11 @@ const filterChips: Array<{ key: FilterKey; label: string; query: Partial<JobQuer
   { key: 'saved', label: 'Saved', query: { saved: true } },
 ];
 
-const workModeTone: Record<WorkMode, BadgeTone> = {
-  remote: 'success',
-  hybrid: 'info',
-  onsite: 'warning',
-  unknown: 'neutral',
-};
-
-function scoreTone(score: number): BadgeTone {
-  if (score >= 70) return 'success';
-  if (score >= 40) return 'warning';
-  return 'neutral';
-}
-
 export function RadarPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'newest' | 'match'>('newest');
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   const activeQuery = filterChips.find((f) => f.key === activeFilter)!.query;
   const query: JobQuery = { ...activeQuery, q: search.trim() || undefined, limit: 20, sort };
@@ -49,6 +38,7 @@ export function RadarPage() {
 
   const jobs = jobsQuery.data?.items ?? [];
   const isFiltered = activeFilter !== 'all' || search.trim().length > 0;
+  const selectedJob = jobs.find((job) => job.id === selectedJobId) ?? null;
 
   return (
     <>
@@ -149,7 +139,7 @@ export function RadarPage() {
       ) : (
         <div className="job-list">
           {jobs.map((job: JobRecord) => (
-            <Card key={job.id} className="job-card">
+            <Card key={job.id} className="job-card" onClick={() => setSelectedJobId(job.id)}>
               <div className="job-card-top">
                 <span className="job-title">{job.title}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -157,7 +147,7 @@ export function RadarPage() {
                     <Badge tone={scoreTone(job.matchScore.score)}>{job.matchScore.score}% match</Badge>
                   ) : null}
                   {job.salaryText ? <span className="job-salary">{job.salaryText}</span> : null}
-                  <div className="job-actions-row">
+                  <div className="job-actions-row" onClick={(e) => e.stopPropagation()}>
                     <button
                       className={`icon-button${job.saved ? ' active' : ''}`}
                       title={job.saved ? 'Unsave' : 'Save'}
@@ -209,6 +199,8 @@ export function RadarPage() {
           ))}
         </div>
       )}
+
+      <JobDetailDrawer job={selectedJob} onClose={() => setSelectedJobId(null)} />
     </>
   );
 }
