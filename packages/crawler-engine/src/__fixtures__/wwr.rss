@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss">
+  <channel>
+    <title>We Work Remotely: Full-Stack Programming Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss</link>
+    <description>We Work Remotely: Full-Stack Programming Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <media:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/5766/logo.gif" type="image/png"/>
+      <title>Wonderdog: Full-Stack Product Engineer - Agentic First</title>
+      <region>Anywhere in the World</region>
+      <country>Canada and United States of America</country>
+      <state>Alabama</state>
+      <skills></skills>
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;p&gt;Wonder Dog is a preventative health platform for dogs. Ship customer-facing features end to end: UI, API, database.&lt;/p&gt;</description>
+      <pubDate>Thu, 09 Jul 2026 17:03:38 +0000</pubDate>
+      <expires_at>Sat, 08 Aug 2026 17:03:38 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/wonderdog-full-stack-product-engineer-agentic-first</guid>
+      <link>https://weworkremotely.com/remote-jobs/wonderdog-full-stack-product-engineer-agentic-first</link>
+    </item>
+    <item>
+      <media:content url="https://wwr-pro.s3.amazonaws.com/logos/0076/3337/logo.gif" type="image/png"/>
+      <title>Lemon.io: Senior React Full-stack Developer</title>
+      <region>Anywhere in the World</region>
+      <country>Andorra, Albania, Argentina</country>
+      <skills></skills>
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;p&gt;We connect senior React/Node developers with vetted startups for long-term remote roles.&lt;/p&gt;</description>
+      <pubDate>Wed, 08 Jul 2026 15:28:25 +0000</pubDate>
+      <expires_at>Fri, 07 Aug 2026 15:28:25 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/lemon-io-senior-react-full-stack-developer-5</guid>
+      <link>https://weworkremotely.com/remote-jobs/lemon-io-senior-react-full-stack-developer-5</link>
+    </item>
+    <item>
+      <media:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/5755/logo.gif" type="image/png"/>
+      <title>RETR: Senior Software Engineer</title>
+      <region>Anywhere in the World</region>
+      <country>United States of America</country>
+      <state>Virginia</state>
+      <skills></skills>
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;p&gt;RETR is hiring a senior software engineer to work across our Rails and React codebase.&lt;/p&gt;</description>
+      <pubDate>Wed, 08 Jul 2026 10:57:19 +0000</pubDate>
+      <expires_at>Fri, 07 Aug 2026 10:57:19 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/retr-senior-software-engineer</guid>
+      <link>https://weworkremotely.com/remote-jobs/retr-senior-software-engineer</link>
+    </item>
+    <item>
+      <media:content url="" type="image/png"/>
+      <title>Untitled Remote Opportunity</title>
+      <region></region>
+      <country></country>
+      <skills></skills>
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;p&gt;This item is intentionally malformed for testing: no colon in the title, and no guid/link.&lt;/p&gt;</description>
+      <pubDate>Wed, 08 Jul 2026 09:00:00 +0000</pubDate>
+      <guid></guid>
+      <link></link>
+    </item>
+  </channel>
+</rss>

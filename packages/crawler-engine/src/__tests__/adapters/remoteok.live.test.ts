@@ -13,9 +13,9 @@ describe.runIf(process.env.LIVE === '1')('remoteOkAdapter (live)', () => {
         const res = await fetch(url, { headers: { 'user-agent': 'WaypointBot/0.1 (live test)' } });
         return res.text();
       },
-      fetchJson: async (url) => {
+      fetchJson: async <T,>(url: string): Promise<T> => {
         const res = await fetch(url, { headers: { 'user-agent': 'WaypointBot/0.1 (live test)' } });
-        return res.json();
+        return res.json() as Promise<T>;
       },
       log: console.log,
     };

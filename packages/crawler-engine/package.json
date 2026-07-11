@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@waypoint/shared": "workspace:*",
+    "fast-xml-parser": "^5.9.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
