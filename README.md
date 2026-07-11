@@ -19,21 +19,40 @@ waypoint/
 │   └── ui/                # Design tokens + component library
 ```
 
+## Screenshot
+
+![Job Radar with live crawled data](docs/images/radar.png)
+
 ## Getting started
 
 ```bash
 pnpm install
-docker compose up -d        # Postgres :5433, Redis :6380
-pnpm dev:web                # dashboard at http://localhost:5173
-pnpm dev:api                # API at http://localhost:3001
+pnpm exec playwright install chromium   # needed for the ITviec adapter
+docker compose up -d                    # Postgres :5433, Redis :6380
+cp apps/api/.env.example apps/api/.env
+cd apps/api && pnpm db:migrate && pnpm db:seed && cd ../..
+pnpm dev:web                            # dashboard at http://localhost:5175
+pnpm dev:api                            # API at http://localhost:3001
 ```
+
+Trigger a crawl once both are running: `curl -X POST http://localhost:3001/crawl/run`
+(or use the "Run crawl" button in the Radar UI).
+
+### Ports
+
+| Service    | Port | Notes                                    |
+| ---------- | ---- | ----------------------------------------- |
+| Web        | 5175 | 5173 is reserved for another local project |
+| API        | 3001 |                                            |
+| Postgres   | 5433 | mapped from container's 5432              |
+| Redis      | 6380 | mapped from container's 6379               |
 
 ## Roadmap
 
 Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md).
 
 - [x] **Phase 0** — Monorepo foundation, design system, app shell
-- [ ] **Phase 1** — Crawler engine + job feed (RemoteOK, WeWorkRemotely, HN Who's Hiring, ITviec)
+- [x] **Phase 1** — Crawler engine + job feed (RemoteOK, WeWorkRemotely, HN Who's Hiring, ITviec)
 - [ ] **Phase 2** — Market insights + local LLM skill extraction (Ollama, rule-based fallback)
 - [ ] **Phase 3** — Prep roadmap + spaced-repetition question bank (DSA, system design, cloud, web)
 - [ ] **Phase 4** — Application tracker + polish
