@@ -38,6 +38,13 @@
   --shadow-card: 0 1px 2px rgba(60, 50, 30, 0.05), 0 4px 16px rgba(60, 50, 30, 0.06);
   --shadow-pop: 0 4px 12px rgba(60, 50, 30, 0.1), 0 12px 32px rgba(60, 50, 30, 0.12);
 
+  /* Chart categorical series — more saturated than the soft UI/badge tones
+     (--info/--success read as gray at chart scale; validated separately via
+     dataviz's validate_palette.js, six-check pass in both modes) */
+  --chart-1: #d97757;
+  --chart-2: #2f6db0;
+  --chart-3: #3f8a52;
+
   /* Type */
   --font-display: 'Lora Variable', Georgia, serif;
   --font-body: 'Inter Variable', -apple-system, 'Segoe UI', sans-serif;
@@ -81,6 +88,10 @@
   --border-strong: #4a443b;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
   --shadow-pop: 0 4px 12px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
+
+  --chart-1: #cf6a48;
+  --chart-2: #5991d6;
+  --chart-3: #5aa86a;
 
   color-scheme: dark;
 }
