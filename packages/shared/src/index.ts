@@ -303,3 +303,56 @@ export const RoadmapItemPatch = z.object({
   status: RoadmapItemStatus,
 });
 export type RoadmapItemPatch = z.infer<typeof RoadmapItemPatch>;
+
+/** A review card as returned by GET /review/queue and POST /review/cards/:id/grade. */
+export const ReviewCardRecord = z.object({
+  id: z.string(),
+  contentId: z.string(),
+  trackId: TrackId,
+  prompt: z.string(),
+  answer: z.string(),
+  topicSlug: z.string().nullable(),
+  // SM-2 state, exposed so the client can preview each grade button's next
+  // interval locally (via this package's `sm2()`) without an extra request.
+  easiness: z.number(),
+  intervalDays: z.number().int(),
+  repetitions: z.number().int(),
+  dueAt: z.coerce.date(),
+  lapses: z.number().int(),
+});
+export type ReviewCardRecord = z.infer<typeof ReviewCardRecord>;
+
+/** GET /review/queue query params. */
+export const ReviewQueueQuery = z.object({
+  limit: z.coerce.number().int().positive().max(100).optional(),
+});
+export type ReviewQueueQuery = z.infer<typeof ReviewQueueQuery>;
+
+/** POST /review/cards/:id/grade body. */
+export const ReviewGradeInput = z.object({
+  grade: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+});
+export type ReviewGradeInput = z.infer<typeof ReviewGradeInput>;
+
+export const ReviewTrackStat = z.object({
+  trackId: TrackId,
+  dueCount: z.number().int(),
+});
+export type ReviewTrackStat = z.infer<typeof ReviewTrackStat>;
+
+export const ReviewHeatmapDay = z.object({
+  date: z.string(),
+  count: z.number().int(),
+});
+export type ReviewHeatmapDay = z.infer<typeof ReviewHeatmapDay>;
+
+/** GET /review/stats response. */
+export const ReviewStats = z.object({
+  dueToday: z.number().int(),
+  doneToday: z.number().int(),
+  streak: z.number().int(),
+  perTrack: z.array(ReviewTrackStat),
+  /** Last 30 Asia/Ho_Chi_Minh calendar days, oldest first. */
+  heatmap: z.array(ReviewHeatmapDay),
+});
+export type ReviewStats = z.infer<typeof ReviewStats>;
