@@ -201,3 +201,44 @@ export {
   type MatchProfile,
   type JobSkillInput,
 } from './match.js';
+
+/** GET /insights/skill-demand and /insights/gap query params. */
+export const InsightsSkillDemandQuery = z.object({
+  window: z.string().optional(),
+  seniority: SeniorityLevel.optional(),
+  source: JobSource.optional(),
+});
+export type InsightsSkillDemandQuery = z.infer<typeof InsightsSkillDemandQuery>;
+
+export const SkillDemandItem = z.object({
+  skill: z.string(),
+  category: z.string(),
+  jobCount: z.number().int().nonnegative(),
+  share: z.number(),
+});
+export type SkillDemandItem = z.infer<typeof SkillDemandItem>;
+
+/** GET /insights/skill-trend query params. */
+export const InsightsSkillTrendQuery = z.object({
+  skills: z.string().min(1),
+  window: z.string().optional(),
+  bucket: z.enum(['day', 'week']).optional(),
+});
+export type InsightsSkillTrendQuery = z.infer<typeof InsightsSkillTrendQuery>;
+
+export const SkillTrendResponse = z.object({
+  buckets: z.array(z.string()),
+  series: z.record(z.string(), z.array(z.number())),
+});
+export type SkillTrendResponse = z.infer<typeof SkillTrendResponse>;
+
+/** GET /insights/summary response — stat tiles. */
+export const InsightsSummary = z.object({
+  jobsInWindow: z.number().int().nonnegative(),
+  sourcesHealthy: z.number().int().nonnegative(),
+  sourcesTotal: z.number().int().nonnegative(),
+  /** Formatted (e.g. "$72k"); null when no salaryText in the window was parseable. */
+  medianSalary: z.string().nullable(),
+  topGapSkills: z.array(z.string()),
+});
+export type InsightsSummary = z.infer<typeof InsightsSummary>;
