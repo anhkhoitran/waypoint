@@ -30,6 +30,8 @@ pnpm dev:api                # API at http://localhost:3001
 
 ## Roadmap
 
+Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md).
+
 - [x] **Phase 0** — Monorepo foundation, design system, app shell
 - [ ] **Phase 1** — Crawler engine + job feed (RemoteOK, WeWorkRemotely, HN Who's Hiring, ITviec)
 - [ ] **Phase 2** — Market insights + local LLM skill extraction (Ollama, rule-based fallback)
