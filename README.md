@@ -72,7 +72,7 @@ Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md
 - [x] **Phase 0** — Monorepo foundation, design system, app shell
 - [x] **Phase 1** — Crawler engine + job feed (RemoteOK, WeWorkRemotely, HN Who's Hiring, ITviec)
 - [x] **Phase 2** — Market insights + local LLM skill extraction (Ollama, rule-based fallback)
-- [ ] **Phase 3** — Prep roadmap + spaced-repetition question bank (DSA, system design, cloud, web)
+- [x] **Phase 3** — Prep roadmap + spaced-repetition question bank (DSA, system design, cloud, web)
 - [ ] **Phase 4** — Application tracker + polish
 
 ### Scoping notes
@@ -89,3 +89,12 @@ Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md
 - Crawled description text is tag-stripped and HTML-entity-decoded before
   storage, so `&amp;`/`&nbsp;`/numeric character references never leak into
   the UI or into skill extraction.
+- Prep Roadmap generation is deterministic and idempotent: non-DSA topics are
+  scored by market weight (demand share) + gap weight (demand share restricted
+  to skills missing from your profile) + prerequisite order; the DSA ladder
+  bypasses scoring entirely and fills by canonical order. Regenerating only
+  replaces `todo` items — anything `in_progress`/`done` is never touched.
+- Daily Review's spaced repetition is standard SM-2 (`packages/shared/src/sm2.ts`),
+  with a 10-new-card daily cap so a large unseen deck doesn't dump hundreds of
+  cards into one session; in-progress cards are never throttled. Streak/heatmap
+  day boundaries are fixed to Asia/Ho_Chi_Minh regardless of server timezone.

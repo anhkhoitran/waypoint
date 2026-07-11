@@ -137,10 +137,33 @@ with `--font-mono`.
 
 ## Exit criteria
 
-- [ ] All green: typecheck, build, unit + e2e.
-- [ ] Seed loads: 4 tracks, ~40 topics, ≥80 resources, ≥120 cards, all schema-valid.
-- [ ] `POST /roadmap/generate` produces a 6-week plan with reasons tied to real
-      insight data; regeneration preserves progress.
-- [ ] Daily review loop works end-to-end with SM-2 intervals verified against the
-      canonical sequence.
-- [ ] Both new pages match the design system in light + dark, no console errors.
+- [x] All green: typecheck, build, unit + e2e. 182 tests across the repo.
+- [x] Seed loads: 4 tracks, 43 topics, 88 resources, 120 cards, all schema-valid.
+      Validated by a Zod schema with cross-reference checks (topic->track,
+      card->topic, unique contentIds), enforced both in the seed script and as
+      a unit test against the real content.
+- [x] `POST /roadmap/generate` produces a 6-week plan with reasons tied to real
+      insight data; regeneration preserves progress. Verified live: 18 items
+      across 6 weeks, reasons like "aws appears in 45% of tracked jobs you
+      can't yet cover"; marked a topic done, regenerated, confirmed it
+      survived untouched and wasn't rescheduled.
+- [x] Daily review loop works end-to-end with SM-2 intervals verified against the
+      canonical sequence (1, 6, 16, 45 — unit-tested). Verified live: graded a
+      full 10-card session (which exercised the daily new-card cap), watched
+      due/done/streak/sidebar-badge update after every grade, hit the
+      session-end screen with a correct per-track breakdown.
+- [x] Both new pages match the design system in light + dark, no console errors.
+
+### Notes
+
+- The new-card daily cap (10/day) throttles `GET /review/queue` but not the
+  `dueToday` stat, which counts the full backlog — the Daily Review empty
+  state distinguishes "today's new-card limit reached" from "nothing due" so
+  this doesn't read as a bug when a large unseen deck exists.
+- Keyboard shortcut verification: digit-key grading (1-4) was confirmed live;
+  the space-to-reveal shortcut could not be exercised through the Browser
+  pane's automation (it dispatches a keydown with empty `key`/`code` for the
+  space character specifically — a tool limitation, not app behavior). The
+  handler is a straightforward `e.code === 'Space'` check identical in shape
+  to the working digit-key handler, so this is a coverage gap in automated
+  verification, not a known defect.
