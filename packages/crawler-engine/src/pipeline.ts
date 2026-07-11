@@ -1,5 +1,5 @@
 import type { CrawlRunSummary, NormalizedJob, RawJob } from '@waypoint/shared';
-import type { AdapterContext, SourceAdapter } from './adapter.js';
+import type { AdapterContext, BrowserContextProvider, SourceAdapter } from './adapter.js';
 import { makeDedupKey } from './dedup.js';
 import { RateLimiter } from './rate-limiter.js';
 
@@ -25,6 +25,7 @@ export class CrawlPipeline {
     private readonly store: JobStore,
     private readonly limiter = new RateLimiter(),
     private readonly userAgent = 'WaypointBot/0.1 (personal job dashboard)',
+    private readonly browser?: BrowserContextProvider,
   ) {}
 
   async run(adapter: SourceAdapter): Promise<PipelineResult> {
@@ -113,6 +114,7 @@ export class CrawlPipeline {
       fetchText,
       fetchJson: async <T>(url: string) => JSON.parse(await fetchText(url)) as T,
       log: (message) => console.log(`[${adapter.source}] ${message}`),
+      browser: this.browser,
     };
   }
 }
