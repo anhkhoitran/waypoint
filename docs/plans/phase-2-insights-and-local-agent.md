@@ -169,3 +169,23 @@ work, no console errors; resize to ~1000px width and confirm no overflow.
 - [x] `/insights/gap` response shape documented (Phase 3 dependency). Shape:
       `{ skill, category, jobCount, share }[]`, defined as `SkillDemandItem` in
       `packages/shared/src/index.ts`.
+
+### Post-wrap-up addendum
+
+Found while closing a scope gap before Phase 3 (the Job Radar had no detail
+view for a listing — added as a drawer, reusing this plan's "job detail"
+language from Step 6):
+
+- The drawer was the first UI surface to ever render a job's full
+  `descriptionText`, which exposed two crawl-pipeline bugs no card view had
+  been able to show: `stripHtml()` never decoded HTML entities, and the
+  ITviec adapter sliced the description starting at the marker attribute
+  itself, leaking that attribute text into the front of every ITviec
+  description. Both fixed at the source, plus a one-off idempotent script
+  repaired the 144/287 already-crawled jobs affected.
+- Re-verified this phase's Ollama-outage exit criterion: 9 jobs were still
+  sitting on the `rules` extractor from that test. 3 re-processed cleanly
+  once re-enqueued; the other 6 had a stale Redis `completed` record from
+  *before* the `removeOnComplete` fix landed, silently blocking re-enqueue
+  the same way the original bug did — cleared those records manually and
+  re-ran extraction. All jobs now correctly show `ollama`.

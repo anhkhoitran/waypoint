@@ -83,3 +83,9 @@ Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md
 - Match scores and salary medians are best-effort: match scoring only covers jobs
   with extracted skills, and the median salary stat only counts USD-parseable
   `salaryText` (VND and other formats are excluded rather than guessed at).
+- Job Radar cards open a detail drawer (full description, matched/gap skills,
+  link to the original posting) — added after Phase 2 wrap-up to close a gap
+  in the original Radar UI.
+- Crawled description text is tag-stripped and HTML-entity-decoded before
+  storage, so `&amp;`/`&nbsp;`/numeric character references never leak into
+  the UI or into skill extraction.
