@@ -166,5 +166,11 @@
     "topicSlug": "cloud-iac-terraform",
     "prompt": "What's a Terraform module, and why use one instead of copy-pasting the same resource block in multiple places?",
     "answer": "A module is a reusable, parameterized bundle of resource definitions. Using one avoids drift between copies (a fix only needs to happen once) and makes intent clearer — e.g. a `vpc` module used consistently across environments."
+  },
+  {
+    "contentId": "cloud-029",
+    "topicSlug": "cloud-networking-dns",
+    "prompt": "What's the difference between a public and a private subnet in a VPC?",
+    "answer": "A public subnet has a route to an internet gateway, so its resources can be reachable from (and reach) the public internet directly. A private subnet has no such route — resources there typically reach the internet only indirectly, via a NAT gateway in a public subnet."
   }
 ]

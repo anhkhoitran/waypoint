@@ -172,5 +172,11 @@
     "topicSlug": "web-db-indexing-transactions",
     "prompt": "What's a phantom read, and which transaction isolation level prevents it?",
     "answer": "A phantom read happens when a transaction re-runs a query and sees new rows that another committed transaction inserted in the meantime. Serializable isolation (the strictest level) prevents phantom reads; Repeatable Read does not (in standard SQL, though PostgreSQL's implementation differs)."
+  },
+  {
+    "contentId": "web-030",
+    "topicSlug": "web-security",
+    "prompt": "What does the SameSite cookie attribute do, and how does `Strict` differ from `Lax`?",
+    "answer": "It controls whether a cookie is sent on cross-site requests, mitigating CSRF. `Strict` never sends the cookie cross-site (even on top-level navigation). `Lax` (the modern default) sends it on top-level GET navigations but not on cross-site subrequests like images or forms."
   }
 ]

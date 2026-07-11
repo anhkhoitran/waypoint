@@ -166,5 +166,11 @@
     "topicSlug": "sd-sharding",
     "prompt": "What is database federation (functional partitioning), and how does it differ from sharding?",
     "answer": "Federation splits a database by function/feature (e.g. a separate DB for users, another for orders), while sharding splits a single logical table's rows across multiple databases by key. They're complementary — you can shard within one federated database."
+  },
+  {
+    "contentId": "sd-029",
+    "topicSlug": "sd-message-queues",
+    "prompt": "What's the difference between a message queue (point-to-point) and a pub/sub system, in terms of who consumes a message?",
+    "answer": "In a queue, each message is consumed by exactly one consumer (competing consumers share the load). In pub/sub, every subscriber to a topic receives its own copy of each published message."
   }
 ]
