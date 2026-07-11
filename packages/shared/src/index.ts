@@ -250,3 +250,56 @@ export const InsightsSummary = z.object({
   topGapSkills: z.array(z.string()),
 });
 export type InsightsSummary = z.infer<typeof InsightsSummary>;
+
+/** A track's curated topic content, as returned by GET /roadmap (nested under each item). */
+export const ResourceKind = z.enum(['article', 'video', 'course', 'problem_set', 'book_chapter']);
+export type ResourceKind = z.infer<typeof ResourceKind>;
+
+export const ResourceRecord = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+  kind: ResourceKind,
+  note: z.string().nullable(),
+  estMinutes: z.number().int(),
+});
+export type ResourceRecord = z.infer<typeof ResourceRecord>;
+
+export const TopicRecord = z.object({
+  id: z.string(),
+  trackId: TrackId,
+  slug: z.string(),
+  name: z.string(),
+  order: z.number().int(),
+  difficulty: z.number().int(),
+  skills: z.array(z.string()),
+  resources: z.array(ResourceRecord),
+});
+export type TopicRecord = z.infer<typeof TopicRecord>;
+
+export const RoadmapItemStatus = z.enum(['todo', 'in_progress', 'done']);
+export type RoadmapItemStatus = z.infer<typeof RoadmapItemStatus>;
+
+export const RoadmapItemRecord = z.object({
+  id: z.string(),
+  topicId: z.string(),
+  topic: TopicRecord,
+  weekIndex: z.number().int(),
+  status: RoadmapItemStatus,
+  reason: z.string(),
+  createdAt: z.coerce.date(),
+  completedAt: z.coerce.date().nullable(),
+});
+export type RoadmapItemRecord = z.infer<typeof RoadmapItemRecord>;
+
+export const RoadmapGenerateResponse = z.object({
+  itemsCreated: z.number().int(),
+  weeksScheduled: z.number().int(),
+});
+export type RoadmapGenerateResponse = z.infer<typeof RoadmapGenerateResponse>;
+
+/** PATCH /roadmap/items/:id body. */
+export const RoadmapItemPatch = z.object({
+  status: RoadmapItemStatus,
+});
+export type RoadmapItemPatch = z.infer<typeof RoadmapItemPatch>;
