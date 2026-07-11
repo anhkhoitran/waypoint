@@ -1,0 +1,86 @@
+/* ---------------------------------------------------------------------------
+   Waypoint design tokens
+   Warm paper + terracotta, serif display, generous whitespace.
+   Light is the default; [data-theme="dark"] flips the surface scale.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Surfaces */
+  --bg: #f5f0e8;
+  --surface: #fcfaf5;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ede7db;
+
+  /* Ink */
+  --text: #26241f;
+  --text-secondary: #57534a;
+  --text-muted: #8a8375;
+
+  /* Accent — terracotta */
+  --accent: #d97757;
+  --accent-strong: #c05f3e;
+  --accent-soft: rgba(217, 119, 87, 0.12);
+  --accent-contrast: #ffffff;
+
+  /* Semantic */
+  --success: #5d8a66;
+  --success-soft: rgba(93, 138, 102, 0.14);
+  --warning: #c2933c;
+  --warning-soft: rgba(194, 147, 60, 0.16);
+  --danger: #bb4a3c;
+  --danger-soft: rgba(187, 74, 60, 0.12);
+  --info: #5b7a9d;
+  --info-soft: rgba(91, 122, 157, 0.14);
+
+  /* Lines & shadows */
+  --border: #e2dbcc;
+  --border-strong: #cfc6b2;
+  --shadow-card: 0 1px 2px rgba(60, 50, 30, 0.05), 0 4px 16px rgba(60, 50, 30, 0.06);
+  --shadow-pop: 0 4px 12px rgba(60, 50, 30, 0.1), 0 12px 32px rgba(60, 50, 30, 0.12);
+
+  /* Type */
+  --font-display: 'Lora Variable', Georgia, serif;
+  --font-body: 'Inter Variable', -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Shape & rhythm */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --sidebar-width: 232px;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #1a1815;
+  --surface: #221f1b;
+  --surface-raised: #2a2622;
+  --surface-sunken: #151310;
+
+  --text: #ede9df;
+  --text-secondary: #b5aea0;
+  --text-muted: #847d6f;
+
+  --accent: #e08862;
+  --accent-strong: #eb9a76;
+  --accent-soft: rgba(224, 136, 98, 0.16);
+  --accent-contrast: #201510;
+
+  --success: #86ae8e;
+  --success-soft: rgba(134, 174, 142, 0.14);
+  --warning: #d3ab5e;
+  --warning-soft: rgba(211, 171, 94, 0.15);
+  --danger: #d9776a;
+  --danger-soft: rgba(217, 119, 106, 0.14);
+  --info: #8aa7c7;
+  --info-soft: rgba(138, 167, 199, 0.14);
+
+  --border: #38332c;
+  --border-strong: #4a443b;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-pop: 0 4px 12px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
