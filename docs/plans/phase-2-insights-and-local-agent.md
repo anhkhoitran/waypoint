@@ -146,10 +146,26 @@ work, no console errors; resize to ~1000px width and confirm no overflow.
 
 ## Exit criteria
 
-- [ ] All green: typecheck, build, unit + e2e tests.
-- [ ] Backfill extracted skills for every crawled job; JobSkill rows exist with both
-      `rules` and (if Ollama installed) `ollama` extractors.
-- [ ] Killing Ollama mid-run degrades gracefully to rules (verified manually).
-- [ ] Radar cards show match scores and sort by best match.
-- [ ] Insights page renders live aggregates in both themes with the gap highlighted.
-- [ ] `/insights/gap` response shape documented (Phase 3 dependency).
+- [x] All green: typecheck, build, unit + e2e tests. 178+ tests across the repo.
+- [x] Backfill extracted skills for every crawled job; JobSkill rows exist with both
+      `rules` and (if Ollama installed) `ollama` extractors. Ran the real backfill
+      against all 286 Phase 1 jobs through a real local Ollama (qwen2.5:3b);
+      confirmed both extractor values present. (26 jobs — non-tech/spam postings
+      like "Barista", "Mason" — legitimately extracted zero skills; see Step 7's
+      commit for why that looks like a stuck backfill in a naive progress query
+      but isn't.)
+- [x] Killing Ollama mid-run degrades gracefully to rules (verified manually).
+      Simulated by pointing `OLLAMA_URL` at an unreachable address (not the real
+      Ollama install) and re-running extraction on cleared jobs — confirmed fast,
+      correct fallback to `rules` for all of them. This test also caught and fixed
+      a real bug: completed BullMQ jobs with a stable custom jobId blocked all
+      future re-enqueues of that same job (missing `removeOnComplete`).
+- [x] Radar cards show match scores and sort by best match. Verified live: sort by
+      "Best match" correctly re-ordered cards (51%, 45%, 44%, 38%...).
+- [x] Insights page renders live aggregates in both themes with the gap
+      highlighted. Verified live in light + dark: stat tiles, skill-demand bar
+      chart (emphasis coloring for owned vs. gap skills), category filter, trend
+      chart, gap list — no console errors, no overflow at 1000px.
+- [x] `/insights/gap` response shape documented (Phase 3 dependency). Shape:
+      `{ skill, category, jobCount, share }[]`, defined as `SkillDemandItem` in
+      `packages/shared/src/index.ts`.
