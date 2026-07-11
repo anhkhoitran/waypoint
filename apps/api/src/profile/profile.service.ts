@@ -13,6 +13,7 @@ function toProfile(record: ProfileRow): Profile {
     targetSeniority: record.targetSeniority as Profile['targetSeniority'],
     targetWorkModes: record.targetWorkModes as Profile['targetWorkModes'],
     locations: record.locations,
+    hoursPerWeek: record.hoursPerWeek,
   };
 }
 

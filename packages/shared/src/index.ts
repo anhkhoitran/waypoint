@@ -172,7 +172,7 @@ export {
   type SkillDefinition,
 } from './taxonomy.js';
 
-/** The project owner's profile, used for match scoring (and Phase 3 roadmap generation). */
+/** The project owner's profile, used for match scoring and roadmap generation. */
 export const Profile = z.object({
   id: z.string(),
   skills: z.array(z.string()),
@@ -180,6 +180,7 @@ export const Profile = z.object({
   targetSeniority: SeniorityLevel,
   targetWorkModes: z.array(WorkMode),
   locations: z.array(z.string()),
+  hoursPerWeek: z.number().int().positive(),
 });
 export type Profile = z.infer<typeof Profile>;
 
@@ -192,6 +193,7 @@ export const ProfileInput = z.object({
   targetSeniority: SeniorityLevel,
   targetWorkModes: z.array(WorkMode),
   locations: z.array(z.string()),
+  hoursPerWeek: z.number().int().positive().max(80).default(8),
 });
 export type ProfileInput = z.infer<typeof ProfileInput>;
 

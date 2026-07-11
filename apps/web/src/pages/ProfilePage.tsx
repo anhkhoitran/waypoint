@@ -42,6 +42,7 @@ interface FormState {
   targetSeniority: SeniorityLevel;
   targetWorkModes: Set<WorkMode>;
   locationsText: string;
+  hoursPerWeek: number;
 }
 
 export function ProfilePage() {
@@ -59,6 +60,7 @@ export function ProfilePage() {
         targetSeniority: profileQuery.data.targetSeniority,
         targetWorkModes: new Set(profileQuery.data.targetWorkModes),
         locationsText: profileQuery.data.locations.join(', '),
+        hoursPerWeek: profileQuery.data.hoursPerWeek,
       });
     }
   }, [profileQuery.data, form]);
@@ -114,6 +116,7 @@ export function ProfilePage() {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean),
+      hoursPerWeek: form.hoursPerWeek,
     });
   };
 
@@ -194,6 +197,28 @@ export function ProfilePage() {
                 {mode}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="profile-section">
+          <h3 className="profile-section-title">Study hours per week</h3>
+          <p className="profile-section-hint">Used to pace the Phase 3 prep roadmap into weekly chunks.</p>
+          <div className="stepper">
+            <button
+              className="icon-button"
+              onClick={() => setForm((p) => p && { ...p, hoursPerWeek: Math.max(1, p.hoursPerWeek - 1) })}
+              aria-label="Decrease study hours per week"
+            >
+              <Icon name="minus" size={14} />
+            </button>
+            <span className="stepper-value">{form.hoursPerWeek}</span>
+            <button
+              className="icon-button"
+              onClick={() => setForm((p) => p && { ...p, hoursPerWeek: Math.min(80, p.hoursPerWeek + 1) })}
+              aria-label="Increase study hours per week"
+            >
+              <Icon name="plus" size={14} />
+            </button>
           </div>
         </div>
 
