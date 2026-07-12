@@ -9,6 +9,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "postinstall": "turbo run build --filter=\"./packages/*\"",
     "dev": "turbo run dev",
     "dev:web": "pnpm --filter @waypoint/web dev",
     "dev:api": "pnpm --filter @waypoint/api dev",

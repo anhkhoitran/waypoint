@@ -99,6 +99,10 @@ pnpm dev:api
 pnpm dev:web   # in a second terminal — dashboard at http://localhost:5175
 ```
 
+(`pnpm install`'s `postinstall` hook builds `packages/*` automatically — they ship
+as compiled `dist/`, not raw source, so `apps/api`/`apps/web` can't resolve them
+otherwise.)
+
 Trigger a crawl once both are running: the "Run crawl" button in the Radar UI (or
 `curl -X POST http://localhost:3001/crawl/run`). Then backfill skill extraction:
 `pnpm --filter @waypoint/api run backfill` (or `curl -X POST http://localhost:3001/extract/backfill`).
