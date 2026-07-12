@@ -39,8 +39,13 @@ function toEventRecord(row: ApplicationEvent): ApplicationEventRecord {
   };
 }
 
+function daysBetween(from: Date, to: number): number {
+  return Math.round((to - from.getTime()) / 86_400_000);
+}
+
 function toApplicationRecord(
   row: Application,
+  stageEnteredAt: Date,
   matchResult: ApplicationRecord['matchScore'] = null,
   events?: ApplicationEvent[],
 ): ApplicationRecord {
@@ -57,6 +62,7 @@ function toApplicationRecord(
     salaryExpectation: row.salaryExpectation,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    daysInStage: daysBetween(stageEnteredAt, Date.now()),
     matchScore: matchResult,
     events: events?.map(toEventRecord),
   };
@@ -98,16 +104,41 @@ export class ApplicationsService {
     return result;
   }
 
+  /** Latest stage_change event time per application, for the given ids (falls back to createdAt if absent). */
+  private async stageEnteredAtFor(rows: Array<{ id: string; createdAt: Date }>): Promise<Map<string, Date>> {
+    const result = new Map<string, Date>(rows.map((r) => [r.id, r.createdAt]));
+    if (rows.length === 0) return result;
+
+    const changes = await this.prisma.applicationEvent.findMany({
+      where: { applicationId: { in: rows.map((r) => r.id) }, kind: 'stage_change' },
+      orderBy: { occurredAt: 'desc' },
+    });
+    const seen = new Set<string>();
+    for (const event of changes) {
+      if (seen.has(event.applicationId)) continue;
+      seen.add(event.applicationId);
+      result.set(event.applicationId, event.occurredAt);
+    }
+    return result;
+  }
+
   async board(): Promise<ApplicationBoard> {
     const rows = await this.prisma.application.findMany({ orderBy: { updatedAt: 'desc' } });
     const jobIds = rows.map((r) => r.jobId).filter((id): id is string => id !== null);
-    const scores = await this.matchScoresForJobs(jobIds);
+    const [scores, stageEnteredAt] = await Promise.all([
+      this.matchScoresForJobs(jobIds),
+      this.stageEnteredAtFor(rows),
+    ]);
 
     const empty = Object.fromEntries(
       STAGES.map((s) => [s, [] as ApplicationRecord[]]),
     ) as unknown as ApplicationBoard;
     for (const row of rows) {
-      const record = toApplicationRecord(row, row.jobId ? (scores.get(row.jobId) ?? null) : null);
+      const record = toApplicationRecord(
+        row,
+        stageEnteredAt.get(row.id)!,
+        row.jobId ? (scores.get(row.jobId) ?? null) : null,
+      );
       empty[record.stage].push(record);
     }
     return empty;
@@ -119,8 +150,13 @@ export class ApplicationsService {
       orderBy: { updatedAt: 'desc' },
     });
     const jobIds = rows.map((r) => r.jobId).filter((id): id is string => id !== null);
-    const scores = await this.matchScoresForJobs(jobIds);
-    return rows.map((row) => toApplicationRecord(row, row.jobId ? (scores.get(row.jobId) ?? null) : null));
+    const [scores, stageEnteredAt] = await Promise.all([
+      this.matchScoresForJobs(jobIds),
+      this.stageEnteredAtFor(rows),
+    ]);
+    return rows.map((row) =>
+      toApplicationRecord(row, stageEnteredAt.get(row.id)!, row.jobId ? (scores.get(row.jobId) ?? null) : null),
+    );
   }
 
   async getOne(id: string): Promise<ApplicationRecord> {
@@ -131,7 +167,13 @@ export class ApplicationsService {
       orderBy: { occurredAt: 'desc' },
     });
     const scores = row.jobId ? await this.matchScoresForJobs([row.jobId]) : new Map();
-    return toApplicationRecord(row, row.jobId ? (scores.get(row.jobId) ?? null) : null, events);
+    const stageEnteredAt = await this.stageEnteredAtFor([row]);
+    return toApplicationRecord(
+      row,
+      stageEnteredAt.get(row.id)!,
+      row.jobId ? (scores.get(row.jobId) ?? null) : null,
+      events,
+    );
   }
 
   /** Creates a manual entry, or (jobId given) an idempotent "track this job" action. */
@@ -228,19 +270,9 @@ export class ApplicationsService {
     });
     let avgDaysInStage: number | null = null;
     if (active.length > 0) {
-      const lastStageChanges = await this.prisma.applicationEvent.findMany({
-        where: { applicationId: { in: active.map((a) => a.id) }, kind: 'stage_change' },
-        orderBy: { occurredAt: 'desc' },
-      });
-      const latestByApp = new Map<string, Date>();
-      for (const event of lastStageChanges) {
-        if (!latestByApp.has(event.applicationId)) latestByApp.set(event.applicationId, event.occurredAt);
-      }
+      const stageEnteredAt = await this.stageEnteredAtFor(active);
       const now = Date.now();
-      const daysList = active.map((a) => {
-        const since = latestByApp.get(a.id) ?? a.createdAt;
-        return (now - since.getTime()) / 86_400_000;
-      });
+      const daysList = active.map((a) => daysBetween(stageEnteredAt.get(a.id)!, now));
       avgDaysInStage = daysList.reduce((sum, d) => sum + d, 0) / daysList.length;
     }
 

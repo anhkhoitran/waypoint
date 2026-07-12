@@ -398,6 +398,8 @@ export const ApplicationRecord = z.object({
   salaryExpectation: z.string().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  /** Days since entering the current stage (latest stage_change event, or createdAt if none yet). */
+  daysInStage: z.number(),
   /** Populated only when jobId is set and the job still has a computed match score. */
   matchScore: z
     .object({ score: z.number(), matched: z.array(z.string()), missing: z.array(z.string()) })
