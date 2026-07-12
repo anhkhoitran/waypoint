@@ -5,11 +5,14 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { checkE2eServicesAvailable } from './e2e-helpers';
 
 // All seeded rows use this externalId prefix so cleanup is a single scoped delete.
 const PREFIX = 'e2e-jobs-test-';
 
-describe('Jobs API (e2e)', () => {
+const servicesAvailable = await checkE2eServicesAvailable();
+
+describe.skipIf(!servicesAvailable)('Jobs API (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let reactEngineerId: string;

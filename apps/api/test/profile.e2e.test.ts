@@ -6,8 +6,11 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { checkE2eServicesAvailable } from './e2e-helpers';
 
-describe('Profile API (e2e)', () => {
+const servicesAvailable = await checkE2eServicesAvailable();
+
+describe.skipIf(!servicesAvailable)('Profile API (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let originalProfile: ProfileInput;

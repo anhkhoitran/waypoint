@@ -5,6 +5,7 @@ import request from 'supertest';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { checkE2eServicesAvailable } from './e2e-helpers';
 
 // A fixed, known instant so day-boundary math (streak/heatmap) is
 // deterministic regardless of when the test actually runs.
@@ -19,7 +20,9 @@ function daysAgo(d: number): Date {
   return new Date(NOW.getTime() - d * 24 * 60 * 60 * 1000);
 }
 
-describe('Review API (e2e)', () => {
+const servicesAvailable = await checkE2eServicesAvailable();
+
+describe.skipIf(!servicesAvailable)('Review API (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   const testCardIds: string[] = [];

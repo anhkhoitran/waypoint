@@ -90,7 +90,7 @@ export function RoadmapPage() {
   const updateProfile = useUpdateProfile();
   const [expandedWeek, setExpandedWeek] = useState<number | null>(null);
 
-  const items = roadmapQuery.data ?? [];
+  const items = useMemo(() => roadmapQuery.data ?? [], [roadmapQuery.data]);
 
   const weeks = useMemo(() => {
     const grouped = new Map<number, RoadmapItemRecord[]>();
