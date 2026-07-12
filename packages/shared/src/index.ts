@@ -356,3 +356,127 @@ export const ReviewStats = z.object({
   heatmap: z.array(ReviewHeatmapDay),
 });
 export type ReviewStats = z.infer<typeof ReviewStats>;
+
+/** Phase 4 — application tracker. */
+export const ApplicationStage = z.enum([
+  'saved',
+  'applied',
+  'screening',
+  'interviewing',
+  'offer',
+  'rejected',
+  'withdrawn',
+]);
+export type ApplicationStage = z.infer<typeof ApplicationStage>;
+
+export const ApplicationEventKind = z.enum(['note', 'stage_change', 'interview']);
+export type ApplicationEventKind = z.infer<typeof ApplicationEventKind>;
+
+export const InterviewKind = z.enum(['phone', 'technical', 'system_design', 'behavioral', 'final']);
+export type InterviewKind = z.infer<typeof InterviewKind>;
+
+export const ApplicationEventRecord = z.object({
+  id: z.string(),
+  applicationId: z.string(),
+  kind: ApplicationEventKind,
+  body: z.string(),
+  interviewKind: InterviewKind.nullable(),
+  occurredAt: z.coerce.date(),
+});
+export type ApplicationEventRecord = z.infer<typeof ApplicationEventRecord>;
+
+export const ApplicationRecord = z.object({
+  id: z.string(),
+  jobId: z.string().nullable(),
+  company: z.string(),
+  title: z.string(),
+  url: z.string(),
+  stage: ApplicationStage,
+  appliedAt: z.coerce.date().nullable(),
+  nextActionAt: z.coerce.date().nullable(),
+  nextActionNote: z.string().nullable(),
+  salaryExpectation: z.string().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  /** Populated only when jobId is set and the job still has a computed match score. */
+  matchScore: z
+    .object({ score: z.number(), matched: z.array(z.string()), missing: z.array(z.string()) })
+    .nullable()
+    .optional(),
+  /** Populated only on the single-application detail fetch, newest first. */
+  events: z.array(ApplicationEventRecord).optional(),
+});
+export type ApplicationRecord = z.infer<typeof ApplicationRecord>;
+
+const applicationArrayByStage = {
+  saved: z.array(ApplicationRecord),
+  applied: z.array(ApplicationRecord),
+  screening: z.array(ApplicationRecord),
+  interviewing: z.array(ApplicationRecord),
+  offer: z.array(ApplicationRecord),
+  rejected: z.array(ApplicationRecord),
+  withdrawn: z.array(ApplicationRecord),
+};
+
+/** GET /applications (no `stage` filter) response — one array per column. */
+export const ApplicationBoard = z.object(applicationArrayByStage);
+export type ApplicationBoard = z.infer<typeof ApplicationBoard>;
+
+/** POST /applications body — either jobId (prefills + dedupes) or a manual entry. */
+export const ApplicationCreateInput = z
+  .object({
+    jobId: z.string().optional(),
+    company: z.string().min(1).optional(),
+    title: z.string().min(1).optional(),
+    url: z.string().url().optional(),
+    salaryExpectation: z.string().optional(),
+  })
+  .refine((body) => body.jobId || (body.company && body.title && body.url), {
+    message: 'either jobId, or company+title+url, must be provided',
+  });
+export type ApplicationCreateInput = z.infer<typeof ApplicationCreateInput>;
+
+/** PATCH /applications/:id body — editable fields. */
+export const ApplicationUpdateInput = z.object({
+  company: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
+  url: z.string().url().optional(),
+  nextActionAt: z.coerce.date().nullable().optional(),
+  nextActionNote: z.string().nullable().optional(),
+  salaryExpectation: z.string().nullable().optional(),
+});
+export type ApplicationUpdateInput = z.infer<typeof ApplicationUpdateInput>;
+
+/** PATCH /applications/:id/stage body. */
+export const ApplicationStagePatch = z.object({ stage: ApplicationStage });
+export type ApplicationStagePatch = z.infer<typeof ApplicationStagePatch>;
+
+/** POST /applications/:id/events body — stage_change events are server-generated only. */
+export const ApplicationEventInput = z.object({
+  kind: z.enum(['note', 'interview']),
+  body: z.string().min(1),
+  interviewKind: InterviewKind.optional(),
+});
+export type ApplicationEventInput = z.infer<typeof ApplicationEventInput>;
+
+export const ApplicationFunnel = z.object({
+  saved: z.number().int(),
+  applied: z.number().int(),
+  screening: z.number().int(),
+  interviewing: z.number().int(),
+  offer: z.number().int(),
+  rejected: z.number().int(),
+  withdrawn: z.number().int(),
+});
+export type ApplicationFunnel = z.infer<typeof ApplicationFunnel>;
+
+/** GET /applications/stats response. */
+export const ApplicationStats = z.object({
+  funnel: ApplicationFunnel,
+  /** Share of applied-or-further applications that got any response (screening+). Null if none applied yet. */
+  responseRate: z.number().nullable(),
+  interviewsThisWeek: z.number().int(),
+  /** Average days since entering the current stage, across non-terminal applications. Null if none active. */
+  avgDaysInStage: z.number().nullable(),
+});
+export type ApplicationStats = z.infer<typeof ApplicationStats>;

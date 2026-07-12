@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ApplicationsModule } from './applications/applications.module';
 import { CrawlModule } from './crawl/crawl.module';
 import { HealthController } from './health.controller';
 import { InsightsModule } from './insights/insights.module';
@@ -17,6 +18,7 @@ import { RoadmapModule } from './roadmap/roadmap.module';
     InsightsModule,
     RoadmapModule,
     ReviewModule,
+    ApplicationsModule,
   ],
   controllers: [HealthController],
 })

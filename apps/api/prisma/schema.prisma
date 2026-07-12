@@ -33,9 +33,9 @@ model CrawlRun {
 }
 
 model Job {
-  id              String     @id @default(cuid())
+  id              String        @id @default(cuid())
   sourceId        String
-  source          Source     @relation(fields: [sourceId], references: [id])
+  source          Source        @relation(fields: [sourceId], references: [id])
   externalId      String
   url             String
   title           String
@@ -48,10 +48,11 @@ model Job {
   tags            String[]
   postedAt        DateTime?
   fetchedAt       DateTime
-  dedupKey        String     @unique
-  saved           Boolean    @default(false)
-  hidden          Boolean    @default(false)
+  dedupKey        String        @unique
+  saved           Boolean       @default(false)
+  hidden          Boolean       @default(false)
   skills          JobSkill[]
+  applications    Application[]
 
   @@unique([sourceId, externalId])
 }
@@ -135,10 +136,10 @@ model RoadmapItem {
 }
 
 model ReviewCard {
-  id        String   @id @default(cuid())
-  contentId String   @unique // stable seed key, e.g. "dsa-arrays-hashing-01"
+  id        String  @id @default(cuid())
+  contentId String  @unique // stable seed key, e.g. "dsa-arrays-hashing-01"
   trackId   String
-  track     Track    @relation(fields: [trackId], references: [id])
+  track     Track   @relation(fields: [trackId], references: [id])
   prompt    String
   answer    String
   topicSlug String?
@@ -161,4 +162,38 @@ model ReviewLog {
   reviewedAt       DateTime   @default(now())
   previousInterval Int
   nextInterval     Int
+}
+
+// Phase 4 — application tracker.
+
+model Application {
+  id                String             @id @default(cuid())
+  jobId             String? // null for manually-added applications not linked to a crawled job
+  job               Job?               @relation(fields: [jobId], references: [id])
+  company           String
+  title             String
+  url               String
+  stage             String             @default("saved") // saved | applied | screening | interviewing | offer | rejected | withdrawn
+  appliedAt         DateTime?
+  nextActionAt      DateTime?
+  nextActionNote    String?
+  salaryExpectation String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  events            ApplicationEvent[]
+
+  // Postgres unique constraints treat NULL as distinct, so this allows any
+  // number of manual (jobId: null) applications while still enforcing at
+  // most one tracked application per real job.
+  @@unique([jobId])
+}
+
+model ApplicationEvent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id])
+  kind          String // note | stage_change | interview
+  body          String // markdown
+  interviewKind String? // phone | technical | system_design | behavioral | final
+  occurredAt    DateTime    @default(now())
 }
