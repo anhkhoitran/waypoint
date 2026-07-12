@@ -103,6 +103,14 @@ Trigger a crawl once both are running: the "Run crawl" button in the Radar UI (o
 `curl -X POST http://localhost:3001/crawl/run`). Then backfill skill extraction:
 `pnpm --filter @waypoint/api run backfill` (or `curl -X POST http://localhost:3001/extract/backfill`).
 
+### Optional: demo data
+
+Don't want to wait on a real crawl? `pnpm demo:seed` loads a realistic snapshot —
+~60 jobs across all 4 sources with extracted skills, a roadmap already a few weeks
+in, 20 days of review history, and 8 applications spread across the pipeline — so
+the dashboard looks lived-in immediately. It's idempotent (running it twice just
+skips the second time) and safe to run alongside real crawled data.
+
 ### Optional: Playwright + local LLM
 
 - **ITviec adapter** renders its listing pages with JS, so it needs a browser:

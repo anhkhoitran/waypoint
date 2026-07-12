@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 import { JobSource, SKILL_TAXONOMY, TrackId } from '@waypoint/shared';
 import { validateContent } from './content-schema';
 
-const prisma = new PrismaClient();
 const CONTENT_DIR = join(__dirname, 'content');
 
 function readJson(relativePath: string): unknown {
@@ -20,7 +19,10 @@ const displayNames: Record<JobSource, string> = {
   vietnamworks: 'VietnamWorks',
 };
 
-async function main() {
+// Reference/content data only — sources, skills, default profile, tracks,
+// topics, resources, review cards. Shared by `db:seed` and `demo:seed` so
+// both start from the same idempotent baseline.
+export async function seedContent(prisma: PrismaClient) {
   for (const id of JobSource.options) {
     await prisma.source.upsert({
       where: { id },
@@ -114,9 +116,12 @@ async function main() {
   console.log(`Seeded ${cardCount} review cards.`);
 }
 
-main()
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+if (require.main === module) {
+  const prisma = new PrismaClient();
+  seedContent(prisma)
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}

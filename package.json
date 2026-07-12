@@ -12,6 +12,7 @@
     "dev": "turbo run dev",
     "dev:web": "pnpm --filter @waypoint/web dev",
     "dev:api": "pnpm --filter @waypoint/api dev",
+    "demo:seed": "pnpm --filter @waypoint/api run demo:seed",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
