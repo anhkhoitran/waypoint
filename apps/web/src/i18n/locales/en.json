@@ -13,7 +13,9 @@
     "switchToDarkMode": "Switch to dark mode",
     "switchToEnglish": "Switch to English",
     "switchToVietnamese": "Switch to Vietnamese",
-    "loadError": "Couldn't load {{thing}} — is the API running on :3001?"
+    "loadError": "Couldn't load {{thing}} — is the API running on :3001?",
+    "trackApplication": "Track application",
+    "tracked": "Tracked"
   },
   "emptyState": {
     "arrivesInPhase": "Arrives in Phase {{phase}}"
@@ -196,7 +198,56 @@
   "tracker": {
     "title": "Applications",
     "subtitle": "Every application in one pipeline — saved, applied, interviewing, offer.",
-    "emptyTitle": "Application pipeline",
-    "emptyBlurb": "A kanban board linked to jobs from the Radar, with per-application notes, interview logs, and funnel stats to keep the search honest."
+    "addManual": "Add application",
+    "addManualCompany": "Company",
+    "addManualTitle": "Job title",
+    "addManualUrl": "Job URL",
+    "addManualSubmit": "Add",
+    "addManualCancel": "Cancel",
+    "stage": {
+      "saved": "Saved",
+      "applied": "Applied",
+      "screening": "Screening",
+      "interviewing": "Interviewing",
+      "offer": "Offer",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn"
+    },
+    "closedRailTitle": "Closed",
+    "statResponseRate": "Response rate",
+    "statInterviewsThisWeek": "Interviews this week",
+    "statAvgDaysInStage": "Avg days in stage",
+    "daysInStage_one": "{{count}}d in stage",
+    "daysInStage_other": "{{count}}d in stage",
+    "nextAction": "Next: {{date}}",
+    "emptyBoard": "Nothing tracked yet",
+    "emptyBoardBlurb": "Track a job from the Job Radar, or add one manually.",
+    "drawer": {
+      "close": "Close",
+      "nextActionTitle": "Next action",
+      "nextActionDate": "Date",
+      "nextActionNote": "Note",
+      "nextActionSave": "Save",
+      "nextActionPlaceholder": "e.g. Follow up on application",
+      "timelineTitle": "Timeline",
+      "addNote": "Note",
+      "addInterview": "Interview",
+      "notePlaceholder": "Write a note… (markdown supported)",
+      "interviewKindLabel": "Interview type",
+      "submitEvent": "Add",
+      "noEvents": "No activity yet."
+    },
+    "eventKind": {
+      "note": "Note",
+      "stage_change": "Stage change",
+      "interview": "Interview"
+    },
+    "interviewKind": {
+      "phone": "Phone",
+      "technical": "Technical",
+      "system_design": "System design",
+      "behavioral": "Behavioral",
+      "final": "Final"
+    }
   }
 }

@@ -6,6 +6,7 @@ import { useUpdateJob } from '../api/jobs';
 import { scoreTone, workModeTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
 import { Icon } from './Icon';
+import { TrackApplicationButton } from './TrackApplicationButton';
 
 export function JobDetailDrawer({
   job,
@@ -109,6 +110,7 @@ export function JobDetailDrawer({
               <Icon name="eye-off" size={15} />
               {t('jobDrawer.hide')}
             </Button>
+            <TrackApplicationButton jobId={job.id} variant="button" />
             <a
               className="job-drawer-original-link"
               href={job.url}

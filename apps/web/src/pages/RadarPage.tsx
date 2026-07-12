@@ -8,6 +8,7 @@ import { Icon } from '../components/Icon';
 import { JobDetailDrawer } from '../components/JobDetailDrawer';
 import { PageHeader } from '../components/PageHeader';
 import { SourceHealthPanel } from '../components/SourceHealthPanel';
+import { TrackApplicationButton } from '../components/TrackApplicationButton';
 import { scoreTone, workModeTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
 
@@ -166,6 +167,7 @@ export function RadarPage() {
                     >
                       <Icon name="eye-off" size={15} />
                     </button>
+                    <TrackApplicationButton jobId={job.id} />
                   </div>
                 </div>
               </div>

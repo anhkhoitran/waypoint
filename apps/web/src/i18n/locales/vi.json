@@ -13,7 +13,9 @@
     "switchToDarkMode": "Chuyển sang chế độ tối",
     "switchToEnglish": "Chuyển sang tiếng Anh",
     "switchToVietnamese": "Chuyển sang tiếng Việt",
-    "loadError": "Không tải được {{thing}} — API có đang chạy ở cổng :3001 không?"
+    "loadError": "Không tải được {{thing}} — API có đang chạy ở cổng :3001 không?",
+    "trackApplication": "Theo dõi đơn ứng tuyển",
+    "tracked": "Đã theo dõi"
   },
   "emptyState": {
     "arrivesInPhase": "Sẽ có ở Giai đoạn {{phase}}"
@@ -196,7 +198,56 @@
   "tracker": {
     "title": "Đơn Ứng Tuyển",
     "subtitle": "Mọi đơn ứng tuyển trong một pipeline duy nhất — đã lưu, đã nộp, đang phỏng vấn, có offer.",
-    "emptyTitle": "Pipeline ứng tuyển",
-    "emptyBlurb": "Một bảng kanban liên kết với việc làm từ Radar, kèm ghi chú theo từng đơn ứng tuyển, nhật ký phỏng vấn, và thống kê phễu tuyển dụng để theo dõi quá trình tìm việc chính xác."
+    "addManual": "Thêm đơn ứng tuyển",
+    "addManualCompany": "Công ty",
+    "addManualTitle": "Chức danh",
+    "addManualUrl": "Đường dẫn tin tuyển dụng",
+    "addManualSubmit": "Thêm",
+    "addManualCancel": "Hủy",
+    "stage": {
+      "saved": "Đã lưu",
+      "applied": "Đã nộp",
+      "screening": "Sàng lọc",
+      "interviewing": "Đang phỏng vấn",
+      "offer": "Có offer",
+      "rejected": "Bị từ chối",
+      "withdrawn": "Đã rút"
+    },
+    "closedRailTitle": "Đã đóng",
+    "statResponseRate": "Tỷ lệ phản hồi",
+    "statInterviewsThisWeek": "Phỏng vấn tuần này",
+    "statAvgDaysInStage": "Số ngày TB ở mỗi giai đoạn",
+    "daysInStage_one": "{{count}} ngày ở giai đoạn này",
+    "daysInStage_other": "{{count}} ngày ở giai đoạn này",
+    "nextAction": "Tiếp theo: {{date}}",
+    "emptyBoard": "Chưa theo dõi đơn nào",
+    "emptyBoardBlurb": "Theo dõi một việc làm từ Radar Việc Làm, hoặc thêm thủ công.",
+    "drawer": {
+      "close": "Đóng",
+      "nextActionTitle": "Việc tiếp theo",
+      "nextActionDate": "Ngày",
+      "nextActionNote": "Ghi chú",
+      "nextActionSave": "Lưu",
+      "nextActionPlaceholder": "vd. Theo dõi tiến độ đơn ứng tuyển",
+      "timelineTitle": "Dòng thời gian",
+      "addNote": "Ghi chú",
+      "addInterview": "Phỏng vấn",
+      "notePlaceholder": "Viết ghi chú… (hỗ trợ markdown)",
+      "interviewKindLabel": "Loại phỏng vấn",
+      "submitEvent": "Thêm",
+      "noEvents": "Chưa có hoạt động nào."
+    },
+    "eventKind": {
+      "note": "Ghi chú",
+      "stage_change": "Đổi giai đoạn",
+      "interview": "Phỏng vấn"
+    },
+    "interviewKind": {
+      "phone": "Điện thoại",
+      "technical": "Kỹ thuật",
+      "system_design": "System design",
+      "behavioral": "Behavioral",
+      "final": "Vòng cuối"
+    }
   }
 }

@@ -72,7 +72,7 @@ export function useUpdateApplicationStage() {
           const idx = column.findIndex((a: ApplicationRecord) => a.id === id);
           if (idx !== -1) {
             const [moved] = column.splice(idx, 1);
-            next[stage].unshift({ ...moved, stage });
+            if (moved) next[stage].unshift({ ...moved, stage });
             break;
           }
         }
