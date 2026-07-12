@@ -7,6 +7,7 @@ import { useGradeCard, useReviewQueue, useReviewStats } from '../api/review';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
 import { TRACK_TONE } from '../lib/trackDisplay';
+import { usePageTitle } from '../lib/usePageTitle';
 
 interface GradeOption {
   grade: Sm2Grade;
@@ -32,6 +33,7 @@ function formatInterval(days: number): string {
 
 export function ReviewPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.dailyReview'));
   const queueQuery = useReviewQueue(20);
   const statsQuery = useReviewStats();
   const gradeCard = useGradeCard();

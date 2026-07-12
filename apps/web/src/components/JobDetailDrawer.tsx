@@ -31,7 +31,12 @@ export function JobDetailDrawer({
                 {job.location ?? t('radar.locationUnknown')}
               </div>
             </div>
-            <button className="icon-button" title={t('jobDrawer.close')} onClick={onClose}>
+            <button
+              className="icon-button"
+              title={t('jobDrawer.close')}
+              aria-label={t('jobDrawer.close')}
+              onClick={onClose}
+            >
               <Icon name="x" size={16} />
             </button>
           </div>

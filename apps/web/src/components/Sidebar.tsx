@@ -37,12 +37,15 @@ export function Sidebar() {
           key={item.to}
           to={item.to}
           end={item.to === '/'}
+          title={t(item.labelKey)}
           className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
         >
           <Icon name={item.icon} size={16} />
-          {t(item.labelKey)}
+          <span className="nav-label">{t(item.labelKey)}</span>
           {item.to === '/review' && reviewStats.data && reviewStats.data.dueToday > 0 ? (
-            <span className="nav-badge">{reviewStats.data.dueToday}</span>
+            <span className="nav-badge">
+              {reviewStats.data.dueToday > 99 ? '99+' : reviewStats.data.dueToday}
+            </span>
           ) : null}
         </NavLink>
       ))}
@@ -53,15 +56,16 @@ export function Sidebar() {
         <NavLink
           key={item.to}
           to={item.to}
+          title={t(item.labelKey)}
           className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
         >
           <Icon name={item.icon} size={16} />
-          {t(item.labelKey)}
+          <span className="nav-label">{t(item.labelKey)}</span>
         </NavLink>
       ))}
 
       <div className="sidebar-footer">
-        <span style={{ fontSize: 11.5, color: 'var(--text-muted)', fontWeight: 500 }}>
+        <span className="sidebar-footer-version" style={{ fontSize: 11.5, color: 'var(--text-muted)', fontWeight: 500 }}>
           {t('nav.footer', { phase: 3, version: '0.1' })}
         </span>
         <span style={{ display: 'inline-flex', gap: 4 }}>

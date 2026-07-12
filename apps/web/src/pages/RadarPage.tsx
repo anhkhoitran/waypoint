@@ -11,6 +11,8 @@ import { SourceHealthPanel } from '../components/SourceHealthPanel';
 import { TrackApplicationButton } from '../components/TrackApplicationButton';
 import { scoreTone, workModeTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
+import { usePageTitle } from '../lib/usePageTitle';
+import { useToast } from '../toast';
 
 type FilterKey = 'all' | 'remote' | 'vietnam' | 'senior' | 'saved';
 
@@ -27,6 +29,8 @@ const filterChips: Array<{ key: FilterKey; labelKey: string; query: Partial<JobQ
 
 export function RadarPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.jobRadar'));
+  const { showToast } = useToast();
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'newest' | 'match'>('newest');
@@ -42,6 +46,15 @@ export function RadarPage() {
   const jobs = jobsQuery.data?.items ?? [];
   const isFiltered = activeFilter !== 'all' || search.trim().length > 0;
   const selectedJob = jobs.find((job) => job.id === selectedJobId) ?? null;
+
+  const handleRunCrawl = () => {
+    runCrawl.mutate(undefined, {
+      onSuccess: (data) => {
+        showToast(t('radar.started', { sources: data.enqueued.map((s) => SOURCE_LABELS[s]).join(', ') }));
+      },
+      onError: () => showToast(t('radar.crawlError'), 'error'),
+    });
+  };
 
   return (
     <>
@@ -61,12 +74,8 @@ export function RadarPage() {
                   </span>
                   {t('radar.enqueuing')}
                 </span>
-              ) : runCrawl.isSuccess && runCrawl.data ? (
-                <span className="inline-status">
-                  {t('radar.started', { sources: runCrawl.data.enqueued.map((s) => SOURCE_LABELS[s]).join(', ') })}
-                </span>
               ) : null}
-              <Button onClick={() => runCrawl.mutate(undefined)} disabled={runCrawl.isPending}>
+              <Button onClick={handleRunCrawl} disabled={runCrawl.isPending}>
                 {t('radar.runCrawl')}
               </Button>
             </span>
@@ -140,7 +149,19 @@ export function RadarPage() {
       ) : (
         <div className="job-list">
           {jobs.map((job: JobRecord) => (
-            <Card key={job.id} className="job-card" onClick={() => setSelectedJobId(job.id)}>
+            <Card
+              key={job.id}
+              className="job-card"
+              onClick={() => setSelectedJobId(job.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedJobId(job.id);
+                }
+              }}
+            >
               <div className="job-card-top">
                 <span className="job-title">{job.title}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -154,6 +175,7 @@ export function RadarPage() {
                     <button
                       className={`icon-button${job.saved ? ' active' : ''}`}
                       title={job.saved ? t('radar.unsave') : t('radar.save')}
+                      aria-label={job.saved ? t('radar.unsave') : t('radar.save')}
                       onClick={() =>
                         updateJob.mutate({ id: job.id, patch: { saved: !job.saved } })
                       }
@@ -163,6 +185,7 @@ export function RadarPage() {
                     <button
                       className="icon-button"
                       title={t('radar.hide')}
+                      aria-label={t('radar.hide')}
                       onClick={() => updateJob.mutate({ id: job.id, patch: { hidden: true } })}
                     >
                       <Icon name="eye-off" size={15} />

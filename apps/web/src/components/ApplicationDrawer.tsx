@@ -7,12 +7,14 @@ import { useAddApplicationEvent, useApplication, useUpdateApplication } from '..
 import { STAGE_TONE } from '../lib/applicationDisplay';
 import { scoreTone } from '../lib/jobTone';
 import { timeAgo } from '../lib/time';
+import { useToast } from '../toast';
 import { Icon } from './Icon';
 
 const INTERVIEW_KINDS: InterviewKind[] = ['phone', 'technical', 'system_design', 'behavioral', 'final'];
 
 export function ApplicationDrawer({ applicationId, onClose }: { applicationId: string | null; onClose: () => void }) {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const { data: application } = useApplication(applicationId);
   const updateApplication = useUpdateApplication();
   const addEvent = useAddApplicationEvent();
@@ -50,13 +52,19 @@ export function ApplicationDrawer({ applicationId, onClose }: { applicationId: s
 
   const saveNextAction = () => {
     if (!application) return;
-    updateApplication.mutate({
-      id: application.id,
-      input: {
-        nextActionAt: nextActionDate ? new Date(nextActionDate) : null,
-        nextActionNote: nextActionNote || null,
+    updateApplication.mutate(
+      {
+        id: application.id,
+        input: {
+          nextActionAt: nextActionDate ? new Date(nextActionDate) : null,
+          nextActionNote: nextActionNote || null,
+        },
       },
-    });
+      {
+        onSuccess: () => showToast(t('tracker.drawer.nextActionSaved')),
+        onError: () => showToast(t('tracker.drawer.nextActionSaveError'), 'error'),
+      },
+    );
   };
 
   const submitEvent = () => {
@@ -78,7 +86,12 @@ export function ApplicationDrawer({ applicationId, onClose }: { applicationId: s
             <h2 className="application-drawer-title">{application.title}</h2>
             <div className="job-meta">{application.company}</div>
           </div>
-          <button className="icon-button" title={t('tracker.drawer.close')} onClick={onClose}>
+          <button
+            className="icon-button"
+            title={t('tracker.drawer.close')}
+            aria-label={t('tracker.drawer.close')}
+            onClick={onClose}
+          >
             <Icon name="x" size={16} />
           </button>
         </div>

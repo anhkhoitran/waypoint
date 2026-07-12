@@ -40,6 +40,7 @@ export function TrackApplicationButton({
     <button
       className={`icon-button${tracked ? ' active' : ''}`}
       title={tracked ? t('common.tracked') : t('common.trackApplication')}
+      aria-label={tracked ? t('common.tracked') : t('common.trackApplication')}
       onClick={(e) => {
         e.stopPropagation();
         handleClick();

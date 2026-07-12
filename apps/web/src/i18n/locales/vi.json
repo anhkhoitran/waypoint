@@ -17,8 +17,10 @@
     "trackApplication": "Theo dõi đơn ứng tuyển",
     "tracked": "Đã theo dõi"
   },
-  "emptyState": {
-    "arrivesInPhase": "Sẽ có ở Giai đoạn {{phase}}"
+  "errorBoundary": {
+    "title": "Đã có lỗi xảy ra",
+    "blurb": "Có lỗi không mong muốn xảy ra. Tải lại trang thường sẽ khắc phục được.",
+    "reload": "Tải lại trang"
   },
   "time": {
     "recently": "gần đây",
@@ -56,6 +58,7 @@
     "runCrawl": "Chạy crawl",
     "enqueuing": "Đang xếp hàng…",
     "started": "Đã bắt đầu: {{sources}}",
+    "crawlError": "Không thể bắt đầu thu thập — API có đang chạy ở cổng :3001 không?",
     "searchPlaceholder": "Tìm theo chức danh hoặc công ty…",
     "sortAriaLabel": "Sắp xếp việc làm",
     "sortNewest": "Mới nhất",
@@ -222,12 +225,16 @@
     "nextAction": "Tiếp theo: {{date}}",
     "emptyBoard": "Chưa theo dõi đơn nào",
     "emptyBoardBlurb": "Theo dõi một việc làm từ Radar Việc Làm, hoặc thêm thủ công.",
+    "toastMoved": "Đã chuyển sang {{stage}}",
+    "toastMoveError": "Không thể chuyển đơn ứng tuyển — đã hoàn tác.",
     "drawer": {
       "close": "Đóng",
       "nextActionTitle": "Việc tiếp theo",
       "nextActionDate": "Ngày",
       "nextActionNote": "Ghi chú",
       "nextActionSave": "Lưu",
+      "nextActionSaved": "Đã lưu việc tiếp theo",
+      "nextActionSaveError": "Không thể lưu việc tiếp theo",
       "nextActionPlaceholder": "vd. Theo dõi tiến độ đơn ứng tuyển",
       "timelineTitle": "Dòng thời gian",
       "addNote": "Ghi chú",

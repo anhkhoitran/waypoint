@@ -17,8 +17,10 @@
     "trackApplication": "Track application",
     "tracked": "Tracked"
   },
-  "emptyState": {
-    "arrivesInPhase": "Arrives in Phase {{phase}}"
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "blurb": "An unexpected error occurred. Reloading usually fixes it.",
+    "reload": "Reload page"
   },
   "time": {
     "recently": "recently",
@@ -56,6 +58,7 @@
     "runCrawl": "Run crawl",
     "enqueuing": "Enqueuing…",
     "started": "Started: {{sources}}",
+    "crawlError": "Couldn't start the crawl — is the API running on :3001?",
     "searchPlaceholder": "Search title or company…",
     "sortAriaLabel": "Sort jobs",
     "sortNewest": "Newest",
@@ -222,12 +225,16 @@
     "nextAction": "Next: {{date}}",
     "emptyBoard": "Nothing tracked yet",
     "emptyBoardBlurb": "Track a job from the Job Radar, or add one manually.",
+    "toastMoved": "Moved to {{stage}}",
+    "toastMoveError": "Couldn't move the application — reverted.",
     "drawer": {
       "close": "Close",
       "nextActionTitle": "Next action",
       "nextActionDate": "Date",
       "nextActionNote": "Note",
       "nextActionSave": "Save",
+      "nextActionSaved": "Next action saved",
+      "nextActionSaveError": "Couldn't save the next action",
       "nextActionPlaceholder": "e.g. Follow up on application",
       "timelineTitle": "Timeline",
       "addNote": "Note",

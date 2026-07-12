@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useProfile, useUpdateProfile } from '../api/profile';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
+import { usePageTitle } from '../lib/usePageTitle';
 
 const CATEGORY_ORDER: SkillCategory[] = [
   'language',
@@ -48,6 +49,7 @@ interface FormState {
 
 export function ProfilePage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.profile'));
   const profileQuery = useProfile();
   const updateProfile = useUpdateProfile();
   const [form, setForm] = useState<FormState | null>(null);

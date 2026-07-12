@@ -9,6 +9,7 @@ import { SkillDemandChart } from '../components/charts/SkillDemandChart';
 import { SkillTrendChart } from '../components/charts/SkillTrendChart';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
+import { usePageTitle } from '../lib/usePageTitle';
 
 type CategoryFilter = 'all' | Extract<SkillCategory, 'frontend' | 'backend' | 'cloud'>;
 
@@ -27,6 +28,7 @@ const WINDOW_OPTIONS = [
 
 export function InsightsPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.marketInsights'));
   const navigate = useNavigate();
   const [windowValue, setWindowValue] = useState('30d');
   const [category, setCategory] = useState<CategoryFilter>('all');
@@ -97,7 +99,12 @@ export function InsightsPage() {
         </div>
       </div>
 
-      {!hasAnyData && !demandQuery.isLoading ? (
+      {demandQuery.isError ? (
+        <div className="error-state">
+          <Icon name="alert" size={16} />
+          {t('common.loadError', { thing: t('insights.title') })}
+        </div>
+      ) : !hasAnyData && !demandQuery.isLoading ? (
         <div className="empty-state">
           <span className="empty-icon">
             <Icon name="chart" size={24} />
@@ -164,6 +171,11 @@ export function InsightsPage() {
             </div>
             {trendQuery.isLoading ? (
               <div className="skeleton-card" style={{ height: 260 }} />
+            ) : trendQuery.isError ? (
+              <div className="error-state">
+                <Icon name="alert" size={16} />
+                {t('common.loadError', { thing: t('insights.trendTitle') })}
+              </div>
             ) : trendQuery.data ? (
               <SkillTrendChart trend={trendQuery.data} />
             ) : (
@@ -180,6 +192,11 @@ export function InsightsPage() {
             </div>
             {gapQuery.isLoading ? (
               <div className="skeleton-card" style={{ height: 160 }} />
+            ) : gapQuery.isError ? (
+              <div className="error-state">
+                <Icon name="alert" size={16} />
+                {t('common.loadError', { thing: t('insights.yourGapTitle') })}
+              </div>
             ) : (gapQuery.data?.length ?? 0) === 0 ? (
               <p className="profile-section-hint">{t('insights.noGap')}</p>
             ) : (

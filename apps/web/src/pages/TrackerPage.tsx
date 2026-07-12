@@ -23,6 +23,8 @@ import { ApplicationDrawer } from '../components/ApplicationDrawer';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
 import { ACTIVE_STAGES, CLOSED_STAGES } from '../lib/applicationDisplay';
+import { usePageTitle } from '../lib/usePageTitle';
+import { useToast } from '../toast';
 
 const ALL_STAGES: ApplicationStage[] = [...ACTIVE_STAGES, ...CLOSED_STAGES];
 
@@ -56,6 +58,8 @@ function KanbanColumn({
 
 export function TrackerPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.applications'));
+  const { showToast } = useToast();
   const boardQuery = useApplicationsBoard();
   const statsQuery = useApplicationsStats();
   const updateStage = useUpdateApplicationStage();
@@ -85,7 +89,13 @@ export function TrackerPage() {
       ? (overId as ApplicationStage)
       : findStageOf(overId, board);
     if (!fromStage || !toStage || fromStage === toStage) return;
-    updateStage.mutate({ id: activeId, stage: toStage });
+    updateStage.mutate(
+      { id: activeId, stage: toStage },
+      {
+        onSuccess: () => showToast(t('tracker.toastMoved', { stage: t(`tracker.stage.${toStage}`) })),
+        onError: () => showToast(t('tracker.toastMoveError'), 'error'),
+      },
+    );
   };
 
   const handleAddManual = () => {

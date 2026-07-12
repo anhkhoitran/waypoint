@@ -7,6 +7,7 @@ import { useGenerateRoadmap, useRoadmap, useUpdateRoadmapItem } from '../api/roa
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
 import { RESOURCE_KIND_ICON, TRACK_TONE } from '../lib/trackDisplay';
+import { usePageTitle } from '../lib/usePageTitle';
 
 const STATUS_CYCLE: Record<RoadmapItemStatus, RoadmapItemStatus> = {
   todo: 'in_progress',
@@ -49,7 +50,12 @@ function DifficultyDots({ level }: { level: number }) {
 function StatusToggle({ status, onClick }: { status: RoadmapItemStatus; onClick: () => void }) {
   const { t } = useTranslation();
   return (
-    <button className={`status-toggle status-${status}`} onClick={onClick} title={t(STATUS_LABEL_KEY[status])}>
+    <button
+      className={`status-toggle status-${status}`}
+      onClick={onClick}
+      title={t(STATUS_LABEL_KEY[status])}
+      aria-label={t(STATUS_LABEL_KEY[status])}
+    >
       {status === 'done' ? <Icon name="check" size={13} /> : status === 'in_progress' ? <span className="status-dot" /> : null}
     </button>
   );
@@ -76,6 +82,7 @@ function ProgressRing({ pct }: { pct: number }) {
 
 export function RoadmapPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.prepRoadmap'));
   const roadmapQuery = useRoadmap();
   const profileQuery = useProfile();
   const generateRoadmap = useGenerateRoadmap();
