@@ -1,4 +1,5 @@
 import {
+  closestCenter,
   DndContext,
   KeyboardSensor,
   PointerSensor,
@@ -7,7 +8,7 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Button, Card } from '@waypoint/ui';
 import type { ApplicationBoard, ApplicationStage } from '@waypoint/shared';
 import { useState } from 'react';
@@ -23,6 +24,7 @@ import { ApplicationDrawer } from '../components/ApplicationDrawer';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
 import { ACTIVE_STAGES, CLOSED_STAGES } from '../lib/applicationDisplay';
+import { kanbanKeyboardCoordinates } from '../lib/kanbanKeyboardCoordinates';
 import { usePageTitle } from '../lib/usePageTitle';
 import { useToast } from '../toast';
 
@@ -73,7 +75,7 @@ export function TrackerPage() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, { coordinateGetter: kanbanKeyboardCoordinates }),
   );
 
   const board = boardQuery.data;
@@ -196,7 +198,7 @@ export function TrackerPage() {
           <p className="empty-blurb">{t('tracker.emptyBoardBlurb')}</p>
         </div>
       ) : board ? (
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <div className="kanban-board">
             <div className="kanban-columns">
               {ACTIVE_STAGES.map((stage) => (
