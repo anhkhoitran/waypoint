@@ -1,14 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
-import type {
-  InsightsSkillDemandQuery,
-  InsightsSummary,
-  SkillDemandItem,
-  SkillTrendResponse,
+import {
+  RoleFunction,
+  SeniorityLevel,
+  WorkMode,
+  type InsightsSkillDemandQuery,
+  type InsightsSummary,
+  type RoleFunctionSplitItem,
+  type SalaryBySeniorityItem,
+  type SkillDemandItem,
+  type SkillTrendResponse,
+  type TopCompanyItem,
+  type VolumeBySourceResponse,
+  type WorkModeSplitItem,
 } from '@waypoint/shared';
 import { REGISTERED_ADAPTERS } from '../crawl/adapters';
 import { PrismaService } from '../prisma/prisma.service';
-import { bucketIndex, computeBuckets, formatUsd, median, parseUsdMidpoint, parseWindowDays } from './insights.utils';
+import {
+  bucketIndex,
+  computeBuckets,
+  formatUsd,
+  max,
+  median,
+  min,
+  parseUsdMidpoint,
+  parseWindowDays,
+} from './insights.utils';
 
 const GAP_LIMIT = 15;
 const REGISTERED_SOURCES = Object.keys(REGISTERED_ADAPTERS);
@@ -21,7 +38,7 @@ export class InsightsService {
     const windowDays = parseWindowDays(filters.window, 30);
     const since = new Date(Date.now() - windowDays * 86_400_000);
 
-    const jobWhere: Prisma.JobWhereInput = { hidden: false, fetchedAt: { gte: since } };
+    const jobWhere: Prisma.JobWhereInput = { hidden: false, relevant: true, fetchedAt: { gte: since } };
     if (filters.seniority) jobWhere.seniority = filters.seniority;
     if (filters.source) jobWhere.sourceId = filters.source;
 
@@ -73,7 +90,7 @@ export class InsightsService {
       const rows = await this.prisma.jobSkill.findMany({
         where: {
           skillId: { in: skillRows.map((s) => s.id) },
-          job: { hidden: false, fetchedAt: { gte: since } },
+          job: { hidden: false, relevant: true, fetchedAt: { gte: since } },
         },
         select: { skillId: true, job: { select: { fetchedAt: true } } },
       });
@@ -105,7 +122,7 @@ export class InsightsService {
     const since = new Date(Date.now() - windowDays * 86_400_000);
 
     const jobsInWindow = await this.prisma.job.count({
-      where: { hidden: false, fetchedAt: { gte: since } },
+      where: { hidden: false, relevant: true, fetchedAt: { gte: since } },
     });
 
     const latestRuns = await Promise.all(
@@ -116,7 +133,7 @@ export class InsightsService {
     const sourcesHealthy = latestRuns.filter((r) => r?.status === 'success').length;
 
     const salaryRows = await this.prisma.job.findMany({
-      where: { hidden: false, fetchedAt: { gte: since }, salaryText: { not: null } },
+      where: { hidden: false, relevant: true, fetchedAt: { gte: since }, salaryText: { not: null } },
       select: { salaryText: true },
     });
     const midpoints = salaryRows
@@ -133,5 +150,110 @@ export class InsightsService {
       medianSalary: medianValue !== null ? formatUsd(medianValue) : null,
       topGapSkills: gapSkills.slice(0, 3).map((g) => g.skill),
     };
+  }
+
+  async workModeSplit(window?: string): Promise<WorkModeSplitItem[]> {
+    const windowDays = parseWindowDays(window, 30);
+    const since = new Date(Date.now() - windowDays * 86_400_000);
+
+    const grouped = await this.prisma.job.groupBy({
+      by: ['workMode'],
+      where: { hidden: false, relevant: true, fetchedAt: { gte: since } },
+      _count: { workMode: true },
+    });
+
+    return WorkMode.options
+      .map((workMode) => ({
+        workMode,
+        count: grouped.find((g) => g.workMode === workMode)?._count.workMode ?? 0,
+      }))
+      .filter((item) => item.count > 0);
+  }
+
+  /**
+   * Distribution of parsed per-job salary midpoints within each seniority
+   * bucket (not a single job's own posted range) — see parseUsdMidpoint.
+   * Seniorities with no parseable salaries in the window are omitted.
+   */
+  async salaryBySeniority(window?: string): Promise<SalaryBySeniorityItem[]> {
+    const windowDays = parseWindowDays(window, 30);
+    const since = new Date(Date.now() - windowDays * 86_400_000);
+
+    const results: SalaryBySeniorityItem[] = [];
+    for (const seniority of SeniorityLevel.options) {
+      const rows = await this.prisma.job.findMany({
+        where: { hidden: false, relevant: true, fetchedAt: { gte: since }, seniority, salaryText: { not: null } },
+        select: { salaryText: true },
+      });
+      const midpoints = rows
+        .map((r) => (r.salaryText ? parseUsdMidpoint(r.salaryText) : null))
+        .filter((v): v is number => v !== null);
+
+      const medianValue = median(midpoints);
+      const minValue = min(midpoints);
+      const maxValue = max(midpoints);
+      if (medianValue === null || minValue === null || maxValue === null) continue;
+
+      results.push({ seniority, min: minValue, median: medianValue, max: maxValue, count: midpoints.length });
+    }
+    return results;
+  }
+
+  async volumeBySource(weeks = 8): Promise<VolumeBySourceResponse> {
+    const { since, bucketMs, bucketCount, labels } = computeBuckets(weeks * 7, 'week');
+
+    const series: Record<string, number[]> = {};
+    for (const source of REGISTERED_SOURCES) series[source] = new Array(bucketCount).fill(0);
+
+    const rows = await this.prisma.job.findMany({
+      where: { hidden: false, relevant: true, sourceId: { in: REGISTERED_SOURCES }, fetchedAt: { gte: since } },
+      select: { sourceId: true, fetchedAt: true },
+    });
+
+    for (const row of rows) {
+      const idx = bucketIndex(row.fetchedAt, since, bucketMs, bucketCount);
+      series[row.sourceId]![idx]!++;
+    }
+
+    return { buckets: labels, series };
+  }
+
+  async topCompanies(window?: string, limit = 6): Promise<TopCompanyItem[]> {
+    const windowDays = parseWindowDays(window, 30);
+    const since = new Date(Date.now() - windowDays * 86_400_000);
+
+    const grouped = await this.prisma.job.groupBy({
+      by: ['company'],
+      where: { hidden: false, relevant: true, fetchedAt: { gte: since } },
+      _count: { company: true },
+      orderBy: { _count: { company: 'desc' } },
+      take: limit,
+    });
+
+    return grouped.map((g) => ({ company: g.company, count: g._count.company }));
+  }
+
+  /**
+   * Phase 5: role-function mix from LLM job summaries. Only jobs the
+   * background summarizer has already reached contribute here — no
+   * fabricated "unknown" bucket for the rest, they're simply absent until
+   * summarized.
+   */
+  async roleFunctions(window?: string): Promise<RoleFunctionSplitItem[]> {
+    const windowDays = parseWindowDays(window, 30);
+    const since = new Date(Date.now() - windowDays * 86_400_000);
+
+    const grouped = await this.prisma.jobSummary.groupBy({
+      by: ['roleFunction'],
+      where: { job: { hidden: false, relevant: true, fetchedAt: { gte: since } } },
+      _count: { roleFunction: true },
+    });
+
+    return RoleFunction.options
+      .map((roleFunction) => ({
+        roleFunction,
+        count: grouped.find((g) => g.roleFunction === roleFunction)?._count.roleFunction ?? 0,
+      }))
+      .filter((item) => item.count > 0);
   }
 }

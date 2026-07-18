@@ -51,10 +51,36 @@ model Job {
   dedupKey        String        @unique
   saved           Boolean       @default(false)
   hidden          Boolean       @default(false)
+  // Phase 5: deterministic SWE/IT relevance (see classifyRelevance). Non-tech
+  // roles (e.g. executive assistant, marketing) are flagged false and hidden
+  // from the dashboard + skipped by the summarizer. Defaults true so a job is
+  // never hidden before it's been classified; set by the extract pipeline and
+  // the reclassify backfill. Reversible — never deletes the job.
+  relevant        Boolean       @default(true)
   skills          JobSkill[]
   applications    Application[]
+  summary         JobSummary?
 
   @@unique([sourceId, externalId])
+}
+
+// Phase 5 — LLM-generated structured analysis of a job posting. 1:1 with Job,
+// kept as a separate table (nullable, regenerable, carries its own
+// provenance) rather than columns on Job — same reasoning as JobSkill.
+model JobSummary {
+  jobId              String   @id
+  job                Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  summary            String
+  responsibilities   String[]
+  requirements       String[]
+  niceToHave         String[]
+  benefits           String[]
+  roleFunction       String // frontend | backend | fullstack | mobile | data | ml | devops | security | qa | pm | design | other
+  yearsExperienceMin Int? // nullable; only set when ground-checked against the source text
+  model              String // provenance, e.g. "gemma4:e4b"
+  promptVersion      Int // bump to force re-generation after a prompt change
+  sourceHash         String // hash(descriptionText); re-generate when the posting text changes
+  generatedAt        DateTime @default(now())
 }
 
 model Skill {

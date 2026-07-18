@@ -45,6 +45,14 @@ export function median(values: number[]): number | null {
   return sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
 }
 
+export function min(values: number[]): number | null {
+  return values.length === 0 ? null : Math.min(...values);
+}
+
+export function max(values: number[]): number | null {
+  return values.length === 0 ? null : Math.max(...values);
+}
+
 export interface BucketPlan {
   since: Date;
   bucketMs: number;

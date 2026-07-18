@@ -1,5 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { InsightsSkillDemandQuery, InsightsSkillTrendQuery } from '@waypoint/shared';
+import {
+  InsightsSkillDemandQuery,
+  InsightsSkillTrendQuery,
+  InsightsTopCompaniesQuery,
+  InsightsVolumeQuery,
+  InsightsWindowQuery,
+} from '@waypoint/shared';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { InsightsService } from './insights.service';
 import { parseWindowDays } from './insights.utils';
@@ -31,5 +37,30 @@ export class InsightsController {
   @Get('summary')
   summary() {
     return this.insightsService.summary();
+  }
+
+  @Get('work-mode-split')
+  workModeSplit(@Query(new ZodValidationPipe(InsightsWindowQuery)) query: InsightsWindowQuery) {
+    return this.insightsService.workModeSplit(query.window);
+  }
+
+  @Get('salary-by-seniority')
+  salaryBySeniority(@Query(new ZodValidationPipe(InsightsWindowQuery)) query: InsightsWindowQuery) {
+    return this.insightsService.salaryBySeniority(query.window);
+  }
+
+  @Get('volume-by-source')
+  volumeBySource(@Query(new ZodValidationPipe(InsightsVolumeQuery)) query: InsightsVolumeQuery) {
+    return this.insightsService.volumeBySource(query.weeks);
+  }
+
+  @Get('top-companies')
+  topCompanies(@Query(new ZodValidationPipe(InsightsTopCompaniesQuery)) query: InsightsTopCompaniesQuery) {
+    return this.insightsService.topCompanies(query.window, query.limit);
+  }
+
+  @Get('role-functions')
+  roleFunctions(@Query(new ZodValidationPipe(InsightsWindowQuery)) query: InsightsWindowQuery) {
+    return this.insightsService.roleFunctions(query.window);
   }
 }

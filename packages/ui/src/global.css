@@ -20,6 +20,13 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   transition: background-color 180ms ease, color 180ms ease;
+  /* The sidebar is position:fixed, so it never follows document scroll —
+     any single element wide enough to overflow the viewport (e.g. an
+     unbounded nowrap span with real-world messy data) would scroll the
+     document horizontally out from under it. Elements that need their own
+     horizontal scroll (kanban board, code blocks) opt in locally via
+     overflow-x: auto; the page itself never should. */
+  overflow-x: hidden;
 }
 
 h1,

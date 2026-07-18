@@ -71,6 +71,22 @@ describe.skipIf(!servicesAvailable)('Jobs API (e2e)', () => {
           dedupKey: `${PREFIX}key-3`,
           hidden: true,
         },
+        {
+          sourceId: 'remoteok',
+          externalId: `${PREFIX}4`,
+          url: 'https://example.com/e2e-4',
+          title: 'E2E Executive Assistant',
+          company: 'E2E Corp',
+          location: null,
+          workMode: 'remote',
+          seniority: 'mid',
+          descriptionText: 'admin support',
+          tags: [],
+          postedAt: null,
+          fetchedAt: new Date(Date.now() - 4000),
+          dedupKey: `${PREFIX}key-4`,
+          relevant: false,
+        },
       ],
     });
 
@@ -90,6 +106,14 @@ describe.skipIf(!servicesAvailable)('Jobs API (e2e)', () => {
     expect(res.status).toBe(200);
     const titles = res.body.items.map((j: { title: string }) => j.title);
     expect(titles).not.toContain('E2E Hidden Job');
+  });
+
+  it('excludes non-SWE/IT (relevant: false) jobs by default', async () => {
+    const res = await request(app.getHttpServer()).get('/jobs').query({ q: 'E2E' });
+    expect(res.status).toBe(200);
+    const titles = res.body.items.map((j: { title: string }) => j.title);
+    expect(titles).not.toContain('E2E Executive Assistant');
+    expect(titles).toContain('E2E React Engineer');
   });
 
   it('filters by q across title and company', async () => {
@@ -117,17 +141,25 @@ describe.skipIf(!servicesAvailable)('Jobs API (e2e)', () => {
     expect(titles).not.toContain('E2E Backend Engineer');
   });
 
-  it('paginates with a cursor, returning distinct pages in stable order', async () => {
-    const page1 = await request(app.getHttpServer()).get('/jobs').query({ q: 'E2E', limit: 1 });
-    expect(page1.status).toBe(200);
-    expect(page1.body.items).toHaveLength(1);
-    expect(page1.body.nextCursor).toBeTruthy();
+  it('respects limit while facet counts still reflect the full filtered set', async () => {
+    const res = await request(app.getHttpServer()).get('/jobs').query({ q: 'E2E', limit: 1 });
+    expect(res.status).toBe(200);
+    expect(res.body.items).toHaveLength(1);
+    expect(res.body.nextCursor).toBeUndefined();
+    const sourceFacet = res.body.facets.sources.find(
+      (f: { value: string; count: number }) => f.value === 'weworkremotely',
+    );
+    expect(sourceFacet.count).toBe(1);
+  });
 
-    const page2 = await request(app.getHttpServer())
+  it('multi-selects sources as a comma-separated list', async () => {
+    const res = await request(app.getHttpServer())
       .get('/jobs')
-      .query({ q: 'E2E', limit: 1, cursor: page1.body.nextCursor });
-    expect(page2.body.items).toHaveLength(1);
-    expect(page2.body.items[0].id).not.toBe(page1.body.items[0].id);
+      .query({ q: 'E2E', source: 'remoteok,weworkremotely' });
+    expect(res.status).toBe(200);
+    const titles = res.body.items.map((j: { title: string }) => j.title);
+    expect(titles).toContain('E2E React Engineer');
+    expect(titles).toContain('E2E Backend Engineer');
   });
 
   it('rejects an invalid query param with 400', async () => {

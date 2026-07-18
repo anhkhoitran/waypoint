@@ -6,46 +6,126 @@ import { useTranslation } from 'react-i18next';
 import { useJobs, useRunCrawl, useUpdateJob } from '../api/jobs';
 import { Icon } from '../components/Icon';
 import { JobDetailDrawer } from '../components/JobDetailDrawer';
+import { JobFilterPanel } from '../components/JobFilterPanel';
 import { PageHeader } from '../components/PageHeader';
 import { SourceHealthPanel } from '../components/SourceHealthPanel';
 import { TrackApplicationButton } from '../components/TrackApplicationButton';
 import { scoreTone, workModeTone } from '../lib/jobTone';
+import { activeFilterCount, EMPTY_FILTERS, filtersToQuery, type RadarFilters } from '../lib/radarFilters';
 import { timeAgo } from '../lib/time';
 import { usePageTitle } from '../lib/usePageTitle';
 import { useToast } from '../toast';
 
-type FilterKey = 'all' | 'remote' | 'vietnam' | 'senior' | 'saved';
-
-// "Vietnam" maps to itviec specifically — it's the only Vietnam-focused
-// source with a working adapter today (topdev/vietnamworks are seeded but
-// not yet crawled; see docs/plans/phase-1-crawler-and-job-feed.md).
-const filterChips: Array<{ key: FilterKey; labelKey: string; query: Partial<JobQuery> }> = [
-  { key: 'all', labelKey: 'radar.filters.allSources', query: {} },
-  { key: 'remote', labelKey: 'radar.filters.remote', query: { workMode: 'remote' } },
-  { key: 'vietnam', labelKey: 'radar.filters.vietnam', query: { source: 'itviec' } },
-  { key: 'senior', labelKey: 'radar.filters.senior', query: { seniority: 'senior' } },
-  { key: 'saved', labelKey: 'radar.filters.saved', query: { saved: true } },
-];
+type SortKey = 'newest' | 'match' | 'salary';
 
 export function RadarPage() {
   const { t } = useTranslation();
   usePageTitle(t('nav.jobRadar'));
   const { showToast } = useToast();
-  const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
+  const [filters, setFilters] = useState<RadarFilters>(EMPTY_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<'newest' | 'match'>('newest');
+  const [sort, setSort] = useState<SortKey>('newest');
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
-  const activeQuery = filterChips.find((f) => f.key === activeFilter)!.query;
-  const query: JobQuery = { ...activeQuery, q: search.trim() || undefined, limit: 20, sort };
+  const query: JobQuery = { ...filtersToQuery(filters), q: search.trim() || undefined, sort };
 
   const jobsQuery = useJobs(query);
   const updateJob = useUpdateJob();
   const runCrawl = useRunCrawl();
 
   const jobs = jobsQuery.data?.items ?? [];
-  const isFiltered = activeFilter !== 'all' || search.trim().length > 0;
+  const filterCount = activeFilterCount(filters);
+  const isFiltered = filterCount > 0 || search.trim().length > 0;
   const selectedJob = jobs.find((job) => job.id === selectedJobId) ?? null;
+
+  const isRemoteOnly = filters.workModes.length === 1 && filters.workModes[0] === 'remote';
+  const isVietnamOnly = filters.sources.length === 1 && filters.sources[0] === 'itviec';
+  const isSeniorPlus = filters.seniorities.length === 2 && filters.seniorities.includes('senior');
+
+  // Quick chips merge one dimension into the current filters — they're
+  // shortcuts, not a mutually exclusive radio group, so they stack with
+  // whatever's set in the full filter panel.
+  const quickChips: Array<{ key: string; label: string; active: boolean; onClick: () => void }> = [
+    {
+      key: 'all',
+      label: t('radar.filters.allSources'),
+      active: filterCount === 0,
+      onClick: () => setFilters(EMPTY_FILTERS),
+    },
+    {
+      key: 'remote',
+      label: t('radar.filters.remote'),
+      active: isRemoteOnly,
+      onClick: () => setFilters((prev) => ({ ...prev, workModes: isRemoteOnly ? [] : ['remote'] })),
+    },
+    {
+      key: 'vietnam',
+      label: t('radar.filters.vietnam'),
+      active: isVietnamOnly,
+      onClick: () => setFilters((prev) => ({ ...prev, sources: isVietnamOnly ? [] : ['itviec'] })),
+    },
+    {
+      key: 'senior',
+      label: t('radar.filters.senior'),
+      active: isSeniorPlus,
+      onClick: () =>
+        setFilters((prev) => ({ ...prev, seniorities: isSeniorPlus ? [] : ['senior', 'lead'] })),
+    },
+    {
+      key: 'saved',
+      label: t('radar.filters.saved'),
+      active: filters.savedOnly,
+      onClick: () => setFilters((prev) => ({ ...prev, savedOnly: !prev.savedOnly })),
+    },
+  ];
+
+  const pills: Array<{ key: string; label: string; onRemove: () => void }> = [
+    ...filters.sources.map((v) => ({
+      key: `source-${v}`,
+      label: SOURCE_LABELS[v],
+      onRemove: () => setFilters((prev) => ({ ...prev, sources: prev.sources.filter((s) => s !== v) })),
+    })),
+    ...filters.workModes.map((v) => ({
+      key: `workMode-${v}`,
+      label: t(`workMode.${v}`),
+      onRemove: () => setFilters((prev) => ({ ...prev, workModes: prev.workModes.filter((w) => w !== v) })),
+    })),
+    ...filters.seniorities.map((v) => ({
+      key: `seniority-${v}`,
+      label: t(`seniority.${v}`),
+      onRemove: () =>
+        setFilters((prev) => ({ ...prev, seniorities: prev.seniorities.filter((s) => s !== v) })),
+    })),
+  ];
+  if (filters.salary !== 'any') {
+    pills.push({
+      key: 'salary',
+      label: filters.salary === 'has' ? t('radar.filterPanel.hasSalary') : `$${filters.salary}k+`,
+      onRemove: () => setFilters((prev) => ({ ...prev, salary: 'any' })),
+    });
+  }
+  if (filters.posted !== 'any') {
+    pills.push({
+      key: 'posted',
+      label: filters.posted === '24h' ? t('radar.filterPanel.last24h') : t('radar.filterPanel.lastWeek'),
+      onRemove: () => setFilters((prev) => ({ ...prev, posted: 'any' })),
+    });
+  }
+  if (filters.match !== 'any') {
+    pills.push({
+      key: 'match',
+      label: `${filters.match}%+`,
+      onRemove: () => setFilters((prev) => ({ ...prev, match: 'any' })),
+    });
+  }
+  if (filters.savedOnly) {
+    pills.push({
+      key: 'saved',
+      label: t('radar.filters.saved'),
+      onRemove: () => setFilters((prev) => ({ ...prev, savedOnly: false })),
+    });
+  }
 
   const handleRunCrawl = () => {
     runCrawl.mutate(undefined, {
@@ -97,26 +177,59 @@ export function RadarPage() {
           />
         </div>
         <div className="filter-row" style={{ marginBottom: 0 }}>
-          {filterChips.map((chip) => (
+          {quickChips.map((chip) => (
             <button
               key={chip.key}
-              className={`filter-chip${chip.key === activeFilter ? ' active' : ''}`}
-              onClick={() => setActiveFilter(chip.key)}
+              className={`filter-chip${chip.active ? ' active' : ''}`}
+              onClick={chip.onClick}
             >
-              {t(chip.labelKey)}
+              {chip.label}
             </button>
           ))}
         </div>
+        <button
+          className={`filter-panel-toggle${filtersOpen ? ' active' : ''}`}
+          onClick={() => setFiltersOpen((v) => !v)}
+        >
+          <Icon name="filter" size={13} />
+          {t('radar.filterPanel.title')}
+          {filterCount > 0 ? <Badge tone="accent">{filterCount}</Badge> : null}
+        </button>
         <select
           className="sort-select"
           value={sort}
-          onChange={(e) => setSort(e.target.value as 'newest' | 'match')}
+          onChange={(e) => setSort(e.target.value as SortKey)}
           aria-label={t('radar.sortAriaLabel')}
         >
           <option value="newest">{t('radar.sortNewest')}</option>
           <option value="match">{t('radar.sortBestMatch')}</option>
+          <option value="salary">{t('radar.sortSalary')}</option>
         </select>
       </div>
+
+      {filtersOpen && jobsQuery.data ? (
+        <JobFilterPanel
+          filters={filters}
+          facets={jobsQuery.data.facets}
+          resultsCount={jobs.length}
+          onChange={setFilters}
+          onClearAll={() => {
+            setFilters(EMPTY_FILTERS);
+            setSearch('');
+          }}
+        />
+      ) : null}
+
+      {pills.length > 0 ? (
+        <div className="active-pill-row">
+          {pills.map((pill) => (
+            <button key={pill.key} className="active-pill" onClick={pill.onRemove}>
+              {pill.label}
+              <Icon name="x" size={11} />
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {jobsQuery.isLoading ? (
         <div className="job-list">

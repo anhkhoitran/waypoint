@@ -36,6 +36,28 @@ export const SeniorityLevel = z.enum([
 export type SeniorityLevel = z.infer<typeof SeniorityLevel>;
 
 /**
+ * What kind of role this is, per the Phase 5 LLM job summary. Fixed and
+ * enum-constrained (the model literally cannot emit an off-list value — see
+ * packages/job-summarizer's JSON schema) specifically so this is safe to
+ * aggregate in Insights, unlike free-form summary text.
+ */
+export const RoleFunction = z.enum([
+  'frontend',
+  'backend',
+  'fullstack',
+  'mobile',
+  'data',
+  'ml',
+  'devops',
+  'security',
+  'qa',
+  'pm',
+  'design',
+  'other',
+]);
+export type RoleFunction = z.infer<typeof RoleFunction>;
+
+/**
  * What a source adapter emits straight from the wire — minimally processed,
  * before normalization. Everything optional except identity fields.
  */
@@ -106,6 +128,26 @@ export const CrawlRunRecord = z.object({
 });
 export type CrawlRunRecord = z.infer<typeof CrawlRunRecord>;
 
+/**
+ * A Phase 5 LLM-generated structured analysis of a job posting, as returned
+ * nested on JobRecord. `summary`/`responsibilities`/etc. are display-only —
+ * never fed into Insights aggregates. `roleFunction` is the one field safe
+ * to aggregate (fixed enum); `yearsExperienceMin` is safe only because the
+ * summarizer ground-checks it against the source text before persisting it.
+ */
+export const JobSummary = z.object({
+  summary: z.string(),
+  responsibilities: z.array(z.string()),
+  requirements: z.array(z.string()),
+  niceToHave: z.array(z.string()),
+  benefits: z.array(z.string()),
+  roleFunction: RoleFunction,
+  yearsExperienceMin: z.number().int().nonnegative().nullable(),
+  model: z.string(),
+  generatedAt: z.coerce.date(),
+});
+export type JobSummary = z.infer<typeof JobSummary>;
+
 /** A persisted job as returned by the Jobs API — a NormalizedJob plus DB-assigned fields. */
 export const JobRecord = NormalizedJob.extend({
   id: z.string(),
@@ -120,35 +162,74 @@ export const JobRecord = NormalizedJob.extend({
     })
     .nullable()
     .optional(),
+  /** Null until the background summarizer (Phase 5) has processed this job. */
+  summary: JobSummary.nullable().optional(),
 });
 export type JobRecord = z.infer<typeof JobRecord>;
 
+/** Parses a comma-separated query param into an array of the given enum. */
+function csv<T extends z.ZodTypeAny>(schema: T) {
+  return z.preprocess(
+    (v) => (typeof v === 'string' ? v.split(',').filter(Boolean) : v),
+    z.array(schema),
+  );
+}
+
 /** GET /jobs query params. */
-export const JobSort = z.enum(['newest', 'match']);
+export const JobSort = z.enum(['newest', 'match', 'salary']);
 export type JobSort = z.infer<typeof JobSort>;
+
+export const JobSalaryBucket = z.enum(['any', 'has', '100', '150']);
+export type JobSalaryBucket = z.infer<typeof JobSalaryBucket>;
+
+export const JobPostedBucket = z.enum(['any', '24h', 'week']);
+export type JobPostedBucket = z.infer<typeof JobPostedBucket>;
+
+export const JobMatchBucket = z.enum(['any', '40', '70']);
+export type JobMatchBucket = z.infer<typeof JobMatchBucket>;
 
 export const JobQuery = z.object({
   q: z.string().min(1).optional(),
-  source: JobSource.optional(),
-  workMode: WorkMode.optional(),
-  seniority: SeniorityLevel.optional(),
+  /** Comma-separated list of sources/work modes/seniorities — multi-select facets. */
+  source: csv(JobSource).optional(),
+  workMode: csv(WorkMode).optional(),
+  seniority: csv(SeniorityLevel).optional(),
+  salary: JobSalaryBucket.optional(),
+  posted: JobPostedBucket.optional(),
+  match: JobMatchBucket.optional(),
   saved: z.coerce.boolean().optional(),
   postedWithinDays: z.coerce.number().int().positive().optional(),
-  cursor: z.string().optional(),
-  limit: z.coerce.number().int().positive().max(100).optional(),
+  limit: z.coerce.number().int().positive().max(500).optional(),
   /**
-   * "match" re-sorts by match score within the fetched page only — match
-   * score is computed per-request, not stored, so a true global best-match
-   * ordering under cursor pagination isn't available without materializing
-   * the score. "newest" (the default) is the real DB-level sort.
+   * Job listing filters/sorts entirely in application code against the full
+   * (small, personal-scale) job set — see JobsService.list. That's what
+   * makes "salary" a true global sort and multi-select facets possible with
+   * live counts; there's no cursor pagination to preserve.
    */
   sort: JobSort.optional(),
 });
 export type JobQuery = z.infer<typeof JobQuery>;
 
+export const FacetOption = z.object({
+  value: z.string(),
+  count: z.number().int().nonnegative(),
+});
+export type FacetOption = z.infer<typeof FacetOption>;
+
+/** Counts per candidate value for each facet dimension, given the query's *other* active filters. */
+export const JobFacets = z.object({
+  sources: z.array(FacetOption),
+  workModes: z.array(FacetOption),
+  seniorities: z.array(FacetOption),
+  salary: z.array(FacetOption),
+  posted: z.array(FacetOption),
+  match: z.array(FacetOption),
+});
+export type JobFacets = z.infer<typeof JobFacets>;
+
 export const JobListResponse = z.object({
   items: z.array(JobRecord),
-  nextCursor: z.string().nullable(),
+  facets: JobFacets,
 });
 export type JobListResponse = z.infer<typeof JobListResponse>;
 
@@ -218,6 +299,12 @@ export const InsightsSkillDemandQuery = z.object({
 });
 export type InsightsSkillDemandQuery = z.infer<typeof InsightsSkillDemandQuery>;
 
+/** GET /insights/work-mode-split and /insights/salary-by-seniority query params. */
+export const InsightsWindowQuery = z.object({
+  window: z.string().optional(),
+});
+export type InsightsWindowQuery = z.infer<typeof InsightsWindowQuery>;
+
 export const SkillDemandItem = z.object({
   skill: z.string(),
   category: z.string(),
@@ -250,6 +337,64 @@ export const InsightsSummary = z.object({
   topGapSkills: z.array(z.string()),
 });
 export type InsightsSummary = z.infer<typeof InsightsSummary>;
+
+/** GET /insights/work-mode-split response. */
+export const WorkModeSplitItem = z.object({
+  workMode: WorkMode,
+  count: z.number().int().nonnegative(),
+});
+export type WorkModeSplitItem = z.infer<typeof WorkModeSplitItem>;
+
+/**
+ * GET /insights/role-functions response (Phase 5). Only counts jobs that
+ * already have a JobSummary — jobs the background summarizer hasn't reached
+ * yet are simply absent, not bucketed into a fabricated "unknown".
+ */
+export const RoleFunctionSplitItem = z.object({
+  roleFunction: RoleFunction,
+  count: z.number().int().nonnegative(),
+});
+export type RoleFunctionSplitItem = z.infer<typeof RoleFunctionSplitItem>;
+
+/**
+ * GET /insights/salary-by-seniority response. min/median/max are computed
+ * across parsed per-job salary midpoints within that seniority bucket (not a
+ * single job's own range) — see parseUsdMidpoint in the API's insights.utils.
+ */
+export const SalaryBySeniorityItem = z.object({
+  seniority: SeniorityLevel,
+  min: z.number(),
+  median: z.number(),
+  max: z.number(),
+  count: z.number().int().nonnegative(),
+});
+export type SalaryBySeniorityItem = z.infer<typeof SalaryBySeniorityItem>;
+
+/** GET /insights/volume-by-source query params. */
+export const InsightsVolumeQuery = z.object({
+  weeks: z.coerce.number().int().positive().max(52).optional(),
+});
+export type InsightsVolumeQuery = z.infer<typeof InsightsVolumeQuery>;
+
+/** GET /insights/volume-by-source response — weekly new-job counts per source. */
+export const VolumeBySourceResponse = z.object({
+  buckets: z.array(z.string()),
+  series: z.record(z.string(), z.array(z.number())),
+});
+export type VolumeBySourceResponse = z.infer<typeof VolumeBySourceResponse>;
+
+/** GET /insights/top-companies query params. */
+export const InsightsTopCompaniesQuery = z.object({
+  window: z.string().optional(),
+  limit: z.coerce.number().int().positive().max(50).optional(),
+});
+export type InsightsTopCompaniesQuery = z.infer<typeof InsightsTopCompaniesQuery>;
+
+export const TopCompanyItem = z.object({
+  company: z.string(),
+  count: z.number().int().nonnegative(),
+});
+export type TopCompanyItem = z.infer<typeof TopCompanyItem>;
 
 /** A track's curated topic content, as returned by GET /roadmap (nested under each item). */
 export const ResourceKind = z.enum(['article', 'video', 'course', 'problem_set', 'book_chapter']);

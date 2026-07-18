@@ -1,6 +1,6 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
-import { extractWithFallback } from '@waypoint/skill-extractor';
+import { classifyRelevance, extractWithFallback } from '@waypoint/skill-extractor';
 import type { Prisma } from '@prisma/client';
 import type { Job } from 'bullmq';
 import { PrismaService } from '../prisma/prisma.service';
@@ -52,16 +52,19 @@ export class ExtractProcessor extends WorkerHost {
       ...(jobSkillData.length > 0 ? [this.prisma.jobSkill.createMany({ data: jobSkillData })] : []),
     ]);
 
-    const updates: Prisma.JobUpdateInput = {};
+    const updates: Prisma.JobUpdateInput = {
+      // Deterministic SWE/IT relevance — recomputed on every extraction so a
+      // re-crawl with changed text re-evaluates it. Drives dashboard
+      // filtering and lets the summarizer skip non-tech roles.
+      relevant: classifyRelevance(record.title, record.descriptionText, record.tags),
+    };
     if (record.seniority === 'unknown' && result.seniority !== 'unknown') {
       updates.seniority = result.seniority;
     }
     if (!record.salaryText && result.salaryText) {
       updates.salaryText = result.salaryText;
     }
-    if (Object.keys(updates).length > 0) {
-      await this.prisma.job.update({ where: { id: jobId }, data: updates });
-    }
+    await this.prisma.job.update({ where: { id: jobId }, data: updates });
 
     this.logger.log(
       `extracted job ${jobId}: ${jobSkillData.length} skills via ${result.extractor}`,

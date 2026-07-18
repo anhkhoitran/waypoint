@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { JobPatch, JobQuery } from '@waypoint/shared';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { JobsService } from './jobs.service';
@@ -10,6 +10,11 @@ export class JobsController {
   @Get()
   list(@Query(new ZodValidationPipe(JobQuery)) query: JobQuery) {
     return this.jobsService.list(query);
+  }
+
+  @Post('reclassify-relevance')
+  reclassifyRelevance() {
+    return this.jobsService.reclassifyRelevance();
   }
 
   @Patch(':id')

@@ -44,6 +44,7 @@
   --chart-1: #d97757;
   --chart-2: #2f6db0;
   --chart-3: #3f8a52;
+  --chart-4: #8a8375;
 
   /* Type */
   --font-display: 'Lora Variable', Georgia, serif;
@@ -92,6 +93,7 @@
   --chart-1: #cf6a48;
   --chart-2: #5991d6;
   --chart-3: #5aa86a;
+  --chart-4: #847d6f;
 
   color-scheme: dark;
 }

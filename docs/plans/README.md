@@ -1,6 +1,6 @@
 # Waypoint — implementation plans
 
-Step-by-step execution plans for phases 1–4. Each phase document is written so an
+Step-by-step execution plans for phases 1–5. Each phase document is written so an
 agent (or a human) can pick it up cold and execute top-to-bottom.
 
 | Phase | Document | Outcome |
@@ -9,6 +9,7 @@ agent (or a human) can pick it up cold and execute top-to-bottom.
 | 2 | [phase-2-insights-and-local-agent.md](phase-2-insights-and-local-agent.md) | Skill analytics dashboard + Ollama extraction |
 | 3 | [phase-3-roadmap-and-review.md](phase-3-roadmap-and-review.md) | Personalized study plan + spaced repetition |
 | 4 | [phase-4-tracker-and-polish.md](phase-4-tracker-and-polish.md) | Application kanban + CI + resume-ready README |
+| 5 | [phase-5-llm-job-analysis.md](phase-5-llm-job-analysis.md) | LLM job summaries in the drawer + role-function analytics |
 
 ## Ground rules (apply to every phase)
 

@@ -3,12 +3,27 @@ import type { SkillCategory } from '@waypoint/shared';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGap, useInsightsSummary, useSkillDemand, useSkillTrend } from '../api/insights';
+import {
+  useGap,
+  useInsightsSummary,
+  useRoleFunctions,
+  useSalaryBySeniority,
+  useSkillDemand,
+  useSkillTrend,
+  useTopCompanies,
+  useVolumeBySource,
+  useWorkModeSplit,
+} from '../api/insights';
 import { useProfile } from '../api/profile';
+import { RoleFunctionDonutChart } from '../components/charts/RoleFunctionDonutChart';
+import { SalaryRangeChart } from '../components/charts/SalaryRangeChart';
 import { SkillDemandChart } from '../components/charts/SkillDemandChart';
 import { SkillTrendChart } from '../components/charts/SkillTrendChart';
+import { VolumeBySourceChart } from '../components/charts/VolumeBySourceChart';
+import { WorkModeDonutChart } from '../components/charts/WorkModeDonutChart';
 import { Icon } from '../components/Icon';
 import { PageHeader } from '../components/PageHeader';
+import { TopCompaniesList } from '../components/TopCompaniesList';
 import { usePageTitle } from '../lib/usePageTitle';
 
 type CategoryFilter = 'all' | Extract<SkillCategory, 'frontend' | 'backend' | 'cloud'>;
@@ -38,6 +53,11 @@ export function InsightsPage() {
   const demandQuery = useSkillDemand(windowValue);
   const gapQuery = useGap();
   const profileQuery = useProfile();
+  const workModeQuery = useWorkModeSplit(windowValue);
+  const roleFunctionsQuery = useRoleFunctions(windowValue);
+  const salaryBySeniorityQuery = useSalaryBySeniority(windowValue);
+  const volumeQuery = useVolumeBySource(8);
+  const topCompaniesQuery = useTopCompanies(windowValue, 6);
 
   // Default the trend selection to the top 3 gap skills, once loaded.
   useEffect(() => {
@@ -141,6 +161,71 @@ export function InsightsPage() {
             )}
           </Card>
 
+          <div className="insights-two-up">
+            <Card className="insights-card" style={{ marginBottom: 0 }}>
+              <div className="insights-card-header">
+                <div>
+                  <h3 className="insights-card-title">{t('insights.workModeSplitTitle')}</h3>
+                  <p className="insights-card-hint">{t('insights.workModeSplitHint')}</p>
+                </div>
+              </div>
+              {workModeQuery.isLoading ? (
+                <div className="skeleton-card" style={{ height: 150 }} />
+              ) : workModeQuery.isError ? (
+                <div className="error-state">
+                  <Icon name="alert" size={16} />
+                  {t('common.loadError', { thing: t('insights.workModeSplitTitle') })}
+                </div>
+              ) : (workModeQuery.data?.length ?? 0) === 0 ? (
+                <p className="profile-section-hint">{t('insights.emptyBlurb')}</p>
+              ) : (
+                <WorkModeDonutChart data={workModeQuery.data!} />
+              )}
+            </Card>
+
+            <Card className="insights-card" style={{ marginBottom: 0 }}>
+              <div className="insights-card-header">
+                <div>
+                  <h3 className="insights-card-title">{t('insights.roleFunctionsTitle')}</h3>
+                  <p className="insights-card-hint">{t('insights.roleFunctionsHint')}</p>
+                </div>
+              </div>
+              {roleFunctionsQuery.isLoading ? (
+                <div className="skeleton-card" style={{ height: 150 }} />
+              ) : roleFunctionsQuery.isError ? (
+                <div className="error-state">
+                  <Icon name="alert" size={16} />
+                  {t('common.loadError', { thing: t('insights.roleFunctionsTitle') })}
+                </div>
+              ) : (roleFunctionsQuery.data?.length ?? 0) === 0 ? (
+                <p className="profile-section-hint">{t('insights.emptyBlurb')}</p>
+              ) : (
+                <RoleFunctionDonutChart data={roleFunctionsQuery.data!} />
+              )}
+            </Card>
+
+            <Card className="insights-card" style={{ marginBottom: 0 }}>
+              <div className="insights-card-header">
+                <div>
+                  <h3 className="insights-card-title">{t('insights.salaryBySeniorityTitle')}</h3>
+                  <p className="insights-card-hint">{t('insights.salaryBySeniorityHint')}</p>
+                </div>
+              </div>
+              {salaryBySeniorityQuery.isLoading ? (
+                <div className="skeleton-card" style={{ height: 150 }} />
+              ) : salaryBySeniorityQuery.isError ? (
+                <div className="error-state">
+                  <Icon name="alert" size={16} />
+                  {t('common.loadError', { thing: t('insights.salaryBySeniorityTitle') })}
+                </div>
+              ) : (salaryBySeniorityQuery.data?.length ?? 0) === 0 ? (
+                <p className="profile-section-hint">{t('insights.emptyBlurb')}</p>
+              ) : (
+                <SalaryRangeChart data={salaryBySeniorityQuery.data!} />
+              )}
+            </Card>
+          </div>
+
           <Card className="insights-card">
             <div className="insights-card-header">
               <div>
@@ -182,6 +267,48 @@ export function InsightsPage() {
               <p className="profile-section-hint">{t('insights.pickSkillsHint')}</p>
             )}
           </Card>
+
+          <div className="insights-two-up">
+            <Card className="insights-card" style={{ marginBottom: 0 }}>
+              <div className="insights-card-header">
+                <div>
+                  <h3 className="insights-card-title">{t('insights.volumeBySourceTitle')}</h3>
+                  <p className="insights-card-hint">{t('insights.volumeBySourceHint')}</p>
+                </div>
+              </div>
+              {volumeQuery.isLoading ? (
+                <div className="skeleton-card" style={{ height: 170 }} />
+              ) : volumeQuery.isError ? (
+                <div className="error-state">
+                  <Icon name="alert" size={16} />
+                  {t('common.loadError', { thing: t('insights.volumeBySourceTitle') })}
+                </div>
+              ) : (
+                <VolumeBySourceChart data={volumeQuery.data ?? { buckets: [], series: {} }} />
+              )}
+            </Card>
+
+            <Card className="insights-card" style={{ marginBottom: 0 }}>
+              <div className="insights-card-header">
+                <div>
+                  <h3 className="insights-card-title">{t('insights.topCompaniesTitle')}</h3>
+                  <p className="insights-card-hint">{t('insights.topCompaniesHint')}</p>
+                </div>
+              </div>
+              {topCompaniesQuery.isLoading ? (
+                <div className="skeleton-card" style={{ height: 170 }} />
+              ) : topCompaniesQuery.isError ? (
+                <div className="error-state">
+                  <Icon name="alert" size={16} />
+                  {t('common.loadError', { thing: t('insights.topCompaniesTitle') })}
+                </div>
+              ) : (topCompaniesQuery.data?.length ?? 0) === 0 ? (
+                <p className="profile-section-hint">{t('insights.emptyBlurb')}</p>
+              ) : (
+                <TopCompaniesList data={topCompaniesQuery.data!} />
+              )}
+            </Card>
+          </div>
 
           <Card className="insights-card" style={{ marginBottom: 0 }}>
             <div className="insights-card-header">

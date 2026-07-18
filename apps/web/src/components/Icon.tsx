@@ -95,6 +95,7 @@ const paths: Record<string, JSX.Element> = {
       <path d="M21 21l-4.3-4.3" />
     </>
   ),
+  filter: <path d="M3 5h18M6 12h12M10 19h4" />,
   gear: (
     <>
       <circle cx="12" cy="12" r="3" />

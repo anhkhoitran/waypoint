@@ -6,16 +6,7 @@ import type {
   JobQuery,
   JobSource,
 } from '@waypoint/shared';
-import { apiFetch } from './client';
-
-function buildQueryString(query: Record<string, unknown>): string {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(query)) {
-    if (value !== undefined && value !== '') params.set(key, String(value));
-  }
-  const qs = params.toString();
-  return qs ? `?${qs}` : '';
-}
+import { apiFetch, buildQueryString } from './client';
 
 export function useJobs(query: JobQuery) {
   return useQuery({

@@ -10,6 +10,22 @@ export class ApiError extends Error {
   }
 }
 
+/** Serializes query params, joining arrays as comma-separated values (matches the API's `csv()` parsing). */
+export function buildQueryString(query: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value === undefined || value === '') continue;
+    if (Array.isArray(value)) {
+      if (value.length === 0) continue;
+      params.set(key, value.join(','));
+    } else {
+      params.set(key, String(value));
+    }
+  }
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'content-type': 'application/json', ...init?.headers },

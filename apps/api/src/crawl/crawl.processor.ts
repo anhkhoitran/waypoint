@@ -5,6 +5,7 @@ import type { JobSource } from '@waypoint/shared';
 import type { Job } from 'bullmq';
 import { ExtractService } from '../extract/extract.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { SummarizeService } from '../summarize/summarize.service';
 import { REGISTERED_ADAPTERS } from './adapters';
 import { PlaywrightBrowserProvider } from './playwright-browser-provider';
 import { PrismaJobStore } from './prisma-job-store';
@@ -24,6 +25,7 @@ export class CrawlProcessor extends WorkerHost {
     private readonly browserProvider: PlaywrightBrowserProvider,
     private readonly prisma: PrismaService,
     private readonly extractService: ExtractService,
+    private readonly summarizeService: SummarizeService,
   ) {
     super();
   }
@@ -49,7 +51,9 @@ export class CrawlProcessor extends WorkerHost {
         where: { dedupKey: { in: result.newJobs.map((j) => j.dedupKey) } },
         select: { id: true },
       });
-      await this.extractService.enqueue(rows.map((r) => r.id));
+      const ids = rows.map((r) => r.id);
+      await this.extractService.enqueue(ids);
+      await this.summarizeService.enqueue(ids);
     }
   }
 }

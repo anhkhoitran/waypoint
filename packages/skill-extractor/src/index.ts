@@ -4,3 +4,4 @@ export {
   isOllamaUp,
   type ExtractionResult,
 } from './ollama.js';
+export { classifyRelevance } from './relevance.js';

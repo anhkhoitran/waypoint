@@ -7,6 +7,7 @@ function makePrisma() {
     job: {
       findMany: vi.fn(),
       count: vi.fn(),
+      groupBy: vi.fn(),
     },
     jobSkill: {
       groupBy: vi.fn(),
@@ -20,6 +21,9 @@ function makePrisma() {
     },
     crawlRun: {
       findFirst: vi.fn(),
+    },
+    jobSummary: {
+      groupBy: vi.fn(),
     },
   };
 }
@@ -210,5 +214,140 @@ describe('InsightsService.skillTrend', () => {
     const result = await service.skillTrend(['not-a-real-skill'], 7, 'day');
     expect(result.series['not-a-real-skill']).toEqual([0, 0, 0, 0, 0, 0, 0]);
     expect(prisma.jobSkill.findMany).not.toHaveBeenCalled();
+  });
+});
+
+describe('InsightsService.workModeSplit', () => {
+  let prisma: ReturnType<typeof makePrisma>;
+  let service: InsightsService;
+
+  beforeEach(() => {
+    prisma = makePrisma();
+    service = new InsightsService(prisma as never);
+  });
+
+  it('returns a count per work mode, omitting modes with zero jobs', async () => {
+    prisma.job.groupBy.mockResolvedValue([
+      { workMode: 'remote', _count: { workMode: 12 } },
+      { workMode: 'onsite', _count: { workMode: 3 } },
+    ]);
+
+    const result = await service.workModeSplit('30d');
+    expect(result).toEqual([
+      { workMode: 'remote', count: 12 },
+      { workMode: 'onsite', count: 3 },
+    ]);
+  });
+});
+
+describe('InsightsService.salaryBySeniority', () => {
+  let prisma: ReturnType<typeof makePrisma>;
+  let service: InsightsService;
+
+  beforeEach(() => {
+    prisma = makePrisma();
+    service = new InsightsService(prisma as never);
+  });
+
+  it('computes min/median/max of parsed midpoints per seniority, skipping empty buckets', async () => {
+    prisma.job.findMany.mockImplementation(({ where }: { where: { seniority: string } }) => {
+      if (where.seniority === 'senior') {
+        return Promise.resolve([{ salaryText: '$130k - $150k' }, { salaryText: '$160k - $180k' }]);
+      }
+      return Promise.resolve([]);
+    });
+
+    const result = await service.salaryBySeniority('30d');
+    expect(result).toEqual([
+      { seniority: 'senior', min: 140000, median: 155000, max: 170000, count: 2 },
+    ]);
+  });
+});
+
+describe('InsightsService.volumeBySource', () => {
+  let prisma: ReturnType<typeof makePrisma>;
+  let service: InsightsService;
+
+  beforeEach(() => {
+    prisma = makePrisma();
+    service = new InsightsService(prisma as never);
+  });
+
+  it('buckets job counts by week per source', async () => {
+    const now = Date.now();
+    prisma.job.findMany.mockResolvedValue([
+      { sourceId: 'remoteok', fetchedAt: new Date(now) },
+      { sourceId: 'remoteok', fetchedAt: new Date(now) },
+      { sourceId: 'itviec', fetchedAt: new Date(now) },
+    ]);
+
+    const result = await service.volumeBySource(1);
+    expect(result.buckets).toHaveLength(1);
+    expect(result.series.remoteok).toEqual([2]);
+    expect(result.series.itviec).toEqual([1]);
+    expect(result.series.weworkremotely).toEqual([0]);
+  });
+});
+
+describe('InsightsService.topCompanies', () => {
+  let prisma: ReturnType<typeof makePrisma>;
+  let service: InsightsService;
+
+  beforeEach(() => {
+    prisma = makePrisma();
+    service = new InsightsService(prisma as never);
+  });
+
+  it('returns companies ordered by job count, respecting the limit', async () => {
+    prisma.job.groupBy.mockResolvedValue([
+      { company: 'Acme', _count: { company: 5 } },
+      { company: 'Globex', _count: { company: 2 } },
+    ]);
+
+    const result = await service.topCompanies('30d', 2);
+    expect(result).toEqual([
+      { company: 'Acme', count: 5 },
+      { company: 'Globex', count: 2 },
+    ]);
+  });
+});
+
+describe('InsightsService.roleFunctions', () => {
+  let prisma: ReturnType<typeof makePrisma>;
+  let service: InsightsService;
+
+  beforeEach(() => {
+    prisma = makePrisma();
+    service = new InsightsService(prisma as never);
+  });
+
+  it('returns a count per role function, omitting functions with zero jobs', async () => {
+    prisma.jobSummary.groupBy.mockResolvedValue([
+      { roleFunction: 'backend', _count: { roleFunction: 9 } },
+      { roleFunction: 'frontend', _count: { roleFunction: 4 } },
+    ]);
+
+    const result = await service.roleFunctions('30d');
+    expect(result).toEqual([
+      { roleFunction: 'frontend', count: 4 },
+      { roleFunction: 'backend', count: 9 },
+    ]);
+  });
+
+  it('returns [] when no jobs have been summarized yet', async () => {
+    prisma.jobSummary.groupBy.mockResolvedValue([]);
+    const result = await service.roleFunctions('30d');
+    expect(result).toEqual([]);
+  });
+
+  it('filters by hidden:false and the window via the job relation', async () => {
+    prisma.jobSummary.groupBy.mockResolvedValue([]);
+    await service.roleFunctions('7d');
+    expect(prisma.jobSummary.groupBy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        by: ['roleFunction'],
+        where: { job: expect.objectContaining({ hidden: false }) },
+      }),
+    );
   });
 });
