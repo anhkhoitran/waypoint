@@ -175,8 +175,7 @@ Detailed step-by-step execution plans live in [docs/plans/](docs/plans/README.md
   `salaryText` (VND and other formats are excluded rather than guessed at).
 - i18n scope is UI chrome only (nav, buttons, labels, generated template strings).
   Curated content authored once and read many times — the 120 Daily Review cards,
-  the 88 roadmap resource titles — and crawled job postings stay English-only; see
-  [CLAUDE.md](CLAUDE.md) for the full convention.
+  the 88 roadmap resource titles — and crawled job postings stay English-only.
 - The Application Tracker's `Application.jobId` is nullable with a unique
   constraint, so manual (non-Radar) applications are unlimited while "track this
   job" stays idempotent — clicking it twice on the same job returns the existing

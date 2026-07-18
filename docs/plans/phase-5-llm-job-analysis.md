@@ -171,7 +171,7 @@ worker log summarize one job end-to-end, inspect the `JobSummary` row.
    3. else → raw text block.
 3. Optional "Regenerate" affordance calling `POST /summarize/:jobId`.
 
-**i18n** (per `CLAUDE.md`): section labels + the "AI summary" disclaimer = UI chrome
+**i18n** (per the project i18n convention): section labels + the "AI summary" disclaimer = UI chrome
 → EN + VI. The summary **content** is third-party-derived → **not** translated (same
 bucket as the raw description today). See Decision 3 on summary language.
 
